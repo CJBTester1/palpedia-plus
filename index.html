@@ -195,7 +195,7 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
         <div class="hr"></div>
         <p><b>Roster accounting:</b> the game/marketing count and data-file count differ. The app loads every record exposed by the current structured dataset, including variants/collaboration forms. Astralym is separately marked by source data as a Paldeck-only story boss and not obtainable.</p>
         <p><b>Coordinates:</b> Alpha strings use exact coordinates when supplied. Regular habitat coordinates are approximate region-marker centres, not invented spawn points or region boundaries.</p>
-        <p><b>Build calculator:</b> Potential is modelled separately for HP, Attack and Defense (0–100 talent = 0–30% level-scaling bonus). Condensation applies +5% HP/Attack/Defense per star, Souls provide 20 × 3% enhancement levels per stat, passive stat bonuses stack additively within their bonus category, and ordinary Alpha status applies the documented 1.2× HP scaling. Known legendary Alpha HP scaling exceptions are handled separately. Awakening is modelled as ×1.10 to HP/Attack/Defense from current extracted/community formula evidence. Trust uses per-species Friendship_Stat values loaded from the current palworld-save-pal game-data extraction and is added before level/Potential scaling and later permanent multipliers.</p>
+        <p><b>Build calculator:</b> Potential is modelled separately for HP, Attack and Defense (0–100 talent = 0–30% level-scaling bonus). Condensation applies +5% HP/Attack/Defense per star, Souls provide 20 × 3% enhancement levels per stat, passive stat bonuses stack additively within their bonus category, and ordinary Alpha status applies the documented 1.2× HP scaling. Known legendary Alpha HP scaling exceptions are handled separately. Awakening is modelled as separate additive HP/Attack/Defense components from current v1.0 game-verified extraction evidence, rather than as a blanket percentage. Trust uses per-species Friendship_Stat values loaded from the current palworld-save-pal game-data extraction and is added before level/Potential scaling and later permanent multipliers.</p>
         <p><b>Skill recommendations:</b> “recommended” skills are an explainable efficiency heuristic, not an official tier list. Natural skills are ranked mainly by power/cooldown with same-element skills used as a tie-breaker; where community-measured boss DPS exists, the measurement is displayed separately.</p>
       </div>
       <div class="panel source-list">
@@ -383,34 +383,67 @@ function passiveMods(selected){
 }
 function palBuildStats(p,o){
   const L=Math.max(1,Math.min(80,+o.level||1)),stars=Math.max(0,Math.min(4,+o.stars||0));
-  const pot=k=>1+Math.max(0,Math.min(100,+o[k]||0))*.003;
-  const soul=k=>1+Math.max(0,Math.min(20,+o[k]||0))*.03;
-  const cond=1+stars*.05, pm=passiveMods(o.passives||[]);
+  const iv=k=>Math.max(0,Math.min(100,+o[k]||0))*.003;
+  const soul=k=>Math.max(0,Math.min(20,+o[k]||0))*.03;
+  const cb=stars*.05, cond=1+cb, pm=passiveMods(o.passives||[]);
   const alphaScale=o.alpha?(KNOWN_ALPHA_HP_SCALE[norm(p.name)]||1.2):1;
   const trust=trustStatsFor(p), tr=Math.max(0,Math.min(10,+o.trust||0));
-  const speciesHp=(+p.hp||0)*alphaScale + trust.hp*tr;
-  const speciesAtk=(+p.atk||0) + trust.atk*tr;
-  const speciesDef=(+p.def||0) + trust.def*tr;
-  const pre={
-    hp:Math.floor(500+5*L+speciesHp*.5*L*pot("hpPot")),
-    atk:Math.floor(100+speciesAtk*.075*L*pot("atkPot")),
-    def:Math.floor(50+speciesDef*.075*L*pot("defPot"))
+  const hpScale=(+p.hp||0)*alphaScale + trust.hp*tr;
+  const atkScale=(+p.atk||0) + trust.atk*tr;
+  const defScale=(+p.def||0) + trust.def*tr;
+
+  // Palworld truncates the unmodified panel stat before permanent multipliers.
+  const raw={
+    hp:Math.floor(500+5*L+hpScale*.5*L*(1+iv("hpPot"))),
+    atk:Math.floor(100+atkScale*.075*L*(1+iv("atkPot"))),
+    def:Math.floor(50+defScale*.075*L*(1+iv("defPot")))
   };
-  const awake=o.awakened?1.1:1;
+  const condensed={
+    hp:Math.floor(raw.hp*cond),
+    atk:Math.floor(raw.atk*cond),
+    def:Math.floor(raw.def*cond)
+  };
+
+  // v1.0 Awakening is an additive stat component, not a blanket percentage.
+  // Current game-verified extraction models these contributions from species scaling.
+  const awake=o.awakened?{
+    hp:Math.floor((+p.hp||0)*alphaScale*L*.065*cond),
+    atk:Math.floor((+p.atk||0)*L*(1+iv("atkPot"))*.009),
+    def:Math.floor((+p.def||0)*L*(1+iv("defPot"))*.009)
+  }:{hp:0,atk:0,def:0};
+
+  const subtotal={
+    hp:condensed.hp+awake.hp,
+    atk:condensed.atk+awake.atk,
+    def:condensed.def+awake.def
+  };
   return {
-    hp:Math.floor(pre.hp*(1+pm.hp/100)*soul("hpSoul")*cond*awake),
-    atk:Math.floor(pre.atk*(1+pm.atk/100)*soul("atkSoul")*cond*awake),
-    def:Math.floor(pre.def*(1+pm.def/100)*soul("defSoul")*cond*awake),
-    pre,pm,cond,awake,alphaScale,L,stars,trust,tr
+    hp:Math.floor(subtotal.hp*(1+soul("hpSoul"))*(1+pm.hp/100)),
+    atk:Math.floor(subtotal.atk*(1+soul("atkSoul"))*(1+pm.atk/100)),
+    def:Math.floor(subtotal.def*(1+soul("defSoul"))*(1+pm.def/100)),
+    raw,condensed,awake,subtotal,pm,cond,cb,alphaScale,L,stars,trust,tr
   };
 }
-function workSuitabilityHTML(p,stars){
-  const entries=Object.entries(p.work||{}).sort((a,b)=>b[1]-a[1]);if(!entries.length)return '<div class="small">No work suitability.</div>';
-  const best=Math.max(...entries.map(x=>+x[1]||0));
+function condensationWorkBonuses(p,stars){
+  const entries=Object.entries(p.work||{}).filter(([,v])=>(+v||0)>0);
+  const bonus=Object.fromEntries(entries.map(([k])=>[k,0]));
+  if(!entries.length||stars<=0)return bonus;
+  // Current 1.0 rule: ranks 1–3 improve successive work roles; rank 4 adds +1 to every existing role.
+  // Ties follow the source object's stable work order, which mirrors the structured Pal dataset.
+  const ranked=[...entries].sort((a,b)=>(+b[1]||0)-(+a[1]||0));
+  for(let i=0;i<Math.min(stars,3,ranked.length);i++)bonus[ranked[i][0]]++;
+  if(stars>=4)for(const [k] of entries)bonus[k]++;
+  return bonus;
+}
+function workSuitabilityHTML(p,stars,books={}){
+  const entries=Object.entries(p.work||{}).filter(([,v])=>(+v||0)>0).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length)return '<div class="small">No work suitability.</div>';
+  const cb=condensationWorkBonuses(p,stars);
   return entries.map(([k,v])=>{
-    const condBonus=stars===4?1:(stars>0&&+v===best?1:0);
-    const base=Math.min(10,(+v||0)+condBonus);
-    return `<div class="work-edit"><span>${esc(k.replaceAll("_"," "))}: base ${v}${condBonus?" · condensation +1":""}</span><select class="select book-level" data-work="${esc(k)}"><option value="0">No book → ${base}</option>${[1,2,3,4,5,6,7,8,9].filter(n=>base+n<=10).map(n=>`<option value="${n}">+${n} book${n===1?"":"s"} → ${base+n}</option>`).join("")}</select></div>`;
+    const base=Math.min(10,(+v||0)+(cb[k]||0));
+    const book=Math.max(0,Math.min(9,+books[k]||0));
+    const final=Math.min(10,base+book);
+    return `<div class="work-edit"><span>${esc(k.replaceAll("_"," "))}: ${v}${cb[k]?` +${cb[k]} condensation`:""}${book?` +${book} book${book===1?"":"s"}`:""} → <b>${final}</b></span><select class="select book-level" data-work="${esc(k)}"><option value="0">No book</option>${[1,2,3,4,5,6,7,8,9].filter(n=>base+n<=10).map(n=>`<option value="${n}" ${book===n?"selected":""}>+${n} book${n===1?"":"s"}</option>`).join("")}</select></div>`;
   }).join("");
 }
 function buildOptionsFromUI(){
@@ -420,7 +453,8 @@ function buildOptionsFromUI(){
     hpSoul:+$("#hpSoul").value,atkSoul:+$("#atkSoul").value,defSoul:+$("#defSoul").value,workSoul:+$("#workSoul").value,
     alpha:$("#alphaToggle").checked,awakened:$("#awakeToggle").checked,
     trust:+$("#trustLevel").value,
-    passives:[0,1,2,3].map(i=>$("#passive"+i)?.value||"")
+    passives:[0,1,2,3].map(i=>$("#passive"+i)?.value||""),
+    books:window.__palpediaBooks||{}
   };
 }
 function renderCalculator(p){
@@ -444,14 +478,14 @@ function renderCalculator(p){
     <div class="hr"></div><h3>Calculated combat stats</h3><div id="actualStats"></div>
     <div class="hr"></div><h3>Work Suitability & Applied Technique books</h3><div id="workBuild"></div>
     <div class="hr"></div><h3>Other calculated modifiers</h3><div id="otherMods"></div>
-    <div class="small" style="margin-top:10px">Awakening is currently modelled as ×1.10 HP/Attack/Defense from current extracted/community formula evidence. Work Speed is not increased by Awakening here because current evidence does not establish that effect. Partner Skill-specific buffs and temporary party/base buffs are not folded into combat stats.</div>
+    <div class="small" style="margin-top:10px">Combat stats use the documented two-stage truncation model. Awakening is calculated as a separate additive v1.0 stat component rather than a flat percentage. Partner Skill-specific buffs, food and temporary party/base buffs are not folded into combat stats.</div>
   </div>`;
 }
 function actualStatsTable(p,o){
   const v=palBuildStats(p,o), ps=v.pm;
   const trustNote=o.trust? ` · Trust Lv.${o.trust}: +${fmt(v.trust.hp*o.trust)} HP / +${fmt(v.trust.atk*o.trust)} ATK / +${fmt(v.trust.def*o.trust)} DEF species scaling`:"";
   return `<div class="kpi-grid"><div class="kpi"><strong>${fmt(v.hp)}</strong><span>HP</span></div><div class="kpi"><strong>${fmt(v.atk)}</strong><span>Attack</span></div><div class="kpi"><strong>${fmt(v.def)}</strong><span>Defense</span></div></div>
-  <div class="breakdown" style="margin-top:8px">Level ${v.L} · Potential HP/ATK/DEF ${o.hpPot}/${o.atkPot}/${o.defPot} · Condensation +${v.stars*5}% · Souls HP/ATK/DEF +${o.hpSoul*3}/+${o.atkSoul*3}/+${o.defSoul*3}% · Passives HP/ATK/DEF ${ps.hp>=0?"+":""}${ps.hp}%/${ps.atk>=0?"+":""}${ps.atk}%/${ps.def>=0?"+":""}${ps.def}%${o.alpha?` · Alpha HP scaling ×${v.alphaScale}`:""}${o.awakened?" · Awakening ×1.10":""}${trustNote}</div>`;
+  <div class="breakdown" style="margin-top:8px">Level ${v.L} · Potential HP/ATK/DEF ${o.hpPot}/${o.atkPot}/${o.defPot} · Condensation +${v.stars*5}% · Souls HP/ATK/DEF +${o.hpSoul*3}/+${o.atkSoul*3}/+${o.defSoul*3}% · Passives HP/ATK/DEF ${ps.hp>=0?"+":""}${ps.hp}%/${ps.atk>=0?"+":""}${ps.atk}%/${ps.def>=0?"+":""}${ps.def}%${o.alpha?` · Alpha HP scaling ×${v.alphaScale}`:""}${o.awakened?` · Awakening +${v.awake.hp}/+${v.awake.atk}/+${v.awake.def} HP/ATK/DEF`:""}${trustNote}</div>`;
 }
 function buildLocations(p){
   const reg=(p.regions||[]).map(r=>{
@@ -508,15 +542,6 @@ async function passiveRecommendationsHTML(p){
   picks=[...new Map(picks.map(x=>[x.name,x])).values()].sort((a,b)=>b.tier-a.tier).slice(0,8);
   return `<div class="notice"><b>Role-based passive candidates</b><br><span class="small">These are high-tier breedable passives matched to this Pal's combat/mount/work role. This is guidance, not a claim that one fixed four-passive set is optimal for every build.</span></div><div class="list" style="margin-top:10px">${picks.map(x=>`<div class="row passive"><div><strong>${esc(x.name)}</strong><div class="small">${esc(x.effects)}</div></div><div class="tier">T${fmt(x.tier)}</div></div>`).join("")||`<div class="small">No role-matched passives found.</div>`}</div>`;
 }
-function renderCalculator(p){
-  const l=60,iv=0;
-  return `<div class="two"><div><label for="calcLevel">Level</label><input class="num" id="calcLevel" type="number" min="1" max="80" value="${l}"></div><div><label for="calcIv">IV / Potential %</label><input class="num" id="calcIv" type="number" min="0" max="100" value="${iv}"></div></div>
-  <div id="actualStats">${actualStatsTable(p,l,iv)}</div>
-  <div class="small">Calculated without Souls, Trust, Awakening or temporary/passive modifiers.</div>`;
-}
-function actualStatsTable(p,l,iv){
-  return `<table class="stat-table"><thead><tr><th>Stars</th><th>HP</th><th>ATK</th><th>DEF</th></tr></thead><tbody>${[0,1,2,3,4].map(s=>{const v=actualStats(p,l,iv,s);return `<tr><td>${"★".repeat(s)||"0★"}</td><td>${fmt(v.hp)}</td><td>${fmt(v.atk)}</td><td>${fmt(v.def)}</td></tr>`}).join("")}</tbody></table>`;
-}
 async function openPal(name){
   const p=state.palMap.get(norm(name));if(!p)return;
   $("#drawerName").textContent=p.name;$("#drawerSub").textContent=`Paldeck #${p.number||"—"} · ${p.rarity||"Unknown rarity"}`;
@@ -539,14 +564,19 @@ async function openPal(name){
     <div class="panel"><h3>Abilities & recommended skills</h3><div id="skillsSlot"><div class="small">Loading current learnset…</div></div></div>
     <div class="panel"><h3>Recommended passive candidates</h3><div id="passiveSlot"><div class="small">Loading current passive table…</div></div></div>
     <div class="panel"><h3>How to breed ${esc(p.name)}</h3><button class="loadmore" id="loadBreedForPal" type="button">Load exact parent combinations</button><div id="palBreedSlot"></div></div>`;
+  window.__palpediaBooks={};
   $("#palDialog").showModal();
   const updateCalc=()=>{
     const o=buildOptionsFromUI();
     $("#actualStats").innerHTML=actualStatsTable(p,o);
-    $("#workBuild").innerHTML=workSuitabilityHTML(p,o.stars);
+    $("#workBuild").innerHTML=workSuitabilityHTML(p,o.stars,o.books);
+    document.querySelectorAll(".book-level").forEach(s=>s.addEventListener("change",()=>{
+      window.__palpediaBooks=window.__palpediaBooks||{};
+      window.__palpediaBooks[s.dataset.work]=+s.value||0;
+      updateCalc();
+    }));
     const pm=passiveMods(o.passives);
     $("#otherMods").innerHTML=`<div class="chips"><span class="chip">Work Speed: ${pm.work+(o.workSoul*3)>=0?"+":""}${pm.work+(o.workSoul*3)}%</span><span class="chip">Movement: ${pm.move>=0?"+":""}${pm.move}%</span><span class="chip">Stamina: ${pm.stamina>=0?"+":""}${pm.stamina}%</span>${pm.element.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>`;
-    document.querySelectorAll(".book-level").forEach(s=>s.addEventListener("change",()=>{}));
   };
   Promise.all([ensurePassives(),ensureTrustData()]).then(()=>{
     const opts=(state.passives.passives||[]).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(x=>`<option value="${esc(x.name)}">${esc(x.name)} — ${esc(x.effects)}</option>`).join("");
