@@ -31,18 +31,32 @@ Pals can be filtered by element, mount type and work suitability, and sorted by 
 
 Selecting a Pal opens an expanded profile containing its combat, utility, movement, location, breeding and skill information.
 
-The profile also includes condensation/star coefficients from 0★ through 4★.
+The profile explains condensation effects from 0★ through 4★. Condensation is treated as a combat-stat multiplier rather than as a change to the Pal's underlying species coefficients, and Work Suitability upgrades are handled separately.
 
 ### Stat calculator
 
-Palpedia+ includes an interactive stat calculator that estimates HP, Attack and Defense using:
+Palpedia+ includes an expanded individual Pal build calculator for estimating permanent HP, Attack and Defense. The calculator currently supports:
 
-- Pal species coefficients
-- Level
-- IV / Potential percentage
-- Condensation level from 0★ to 4★
+- Pal species HP, Attack and Defense coefficients
+- Level from 1–80
+- Separate HP, Attack and Defense Potential / IV values from 0–100
+- Condensation from 0★ through 4★
+- Pal Soul enhancement levels from 0–20 for HP, Attack, Defense and Work Speed
+- Up to four Passive Skills, with duplicate passives prevented
+- Species-specific Trust / Friendship stat parameters
+- Alpha HP scaling where supported by the current data
+- Work Suitability changes from condensation
+- Applied Technique book increases to Work Suitability
 
-These values intentionally exclude Souls, Trust, Awakening, temporary effects and passive modifiers.
+The calculator preserves separate modifier classes rather than collapsing them into a single percentage. Potential affects the relevant level-scaled component, intermediate values are truncated at the appropriate stages, and permanent Soul, passive and condensation modifiers are applied separately. Work Speed modifiers from Souls and Passive Skills are likewise compounded rather than simply added together.
+
+#### Awakening limitation
+
+**Awakening is not included in the calculated stats.**
+
+Palworld v1.0 introduced the World Tree Awakening system, but the exact HP, Attack and Defense calculation has not yet been established with enough confidence for Palpedia+ to present an Awakening result as mathematically authoritative. Available technical/community implementations currently disagree about the exact formula and rounding/order of operations.
+
+Until the mechanic can be verified reliably, Palpedia+ deliberately excludes Awakening from its stat results rather than presenting an uncertain estimate as exact. Partner Skill-specific stat effects, food bonuses and temporary party/base effects are also outside the current calculator.
 
 ### Breeding tools
 
@@ -92,7 +106,9 @@ Current sources used by the application include:
 - **beliarance/palworld-kb** for structured Pal stats, Partner Skills, work suitability, drops, regions, locations, active skills and passives
 - **PalworldBreeding.gg** for the primary breeding table and breeding methodology
 - **JohnnyDalvi/Palworld_Smart_Breeder** as the fallback breeding-data source
-- **Palworld Wiki** for condensation mechanics
+- **Palworld Wiki** for documented stat and condensation mechanics
+- **oMaN-Rod/palworld-save-pal** for extracted species-specific Friendship / Trust parameters
+- **deafdudecomputers/PalworldSaveTools** as a technical cross-reference for current stat-formula and rounding behaviour
 
 See the **Sources & methodology** section inside Palpedia+ for the source links and additional methodology notes.
 
@@ -120,7 +136,7 @@ An internet connection is required because the application loads its Pal, locati
 
 ## Current project status
 
-Palpedia+ is an early-stage project. The current implementation is a functional single-file web application intended to establish the core encyclopedia, search, filtering, profile, stat, breeding and Passive Skill functionality.
+Palpedia+ is an early-stage project. The current implementation is a functional single-file web application intended to establish the core encyclopedia, search, filtering, profile, individual build/stat, breeding and Passive Skill functionality. The stat calculator is intentionally conservative about mechanics that are not yet sufficiently verified, including the exact v1.0 Awakening calculation.
 
 Future development may change the data architecture, interface and project structure.
 
