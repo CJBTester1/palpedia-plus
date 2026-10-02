@@ -18,7 +18,8 @@ Browse and search the current structured Pal roster with information including:
 - Partner Skills and effects
 - Drops
 - Ranch production
-- Wild-spawn information
+- Wild-spawn regions and day/night information
+- Searchable species habitat overlays on the interactive Main Map / World Tree map
 - Alpha/boss locations
 - Obtain methods
 - Natural active skills
@@ -107,18 +108,23 @@ Current sources used by the application include:
 - **PalworldBreeding.gg** for the primary breeding table and breeding methodology
 - **JohnnyDalvi/Palworld_Smart_Breeder** as the fallback breeding-data source
 - **Palworld Wiki** for documented stat and condensation mechanics
-- **oMaN-Rod/palworld-save-pal** for extracted species-specific Friendship / Trust parameters
+- **oMaN-Rod/palworld-save-pal** for extracted species-specific Friendship / Trust parameters and interactive map terrain/POI data
+- **PalDB `DT_PaldexDistributionData`** for species-specific day/night Paldeck habitat distributions
 - **deafdudecomputers/PalworldSaveTools** as a technical cross-reference for current stat-formula and rounding behaviour
 
 See the **Sources & methodology** section inside Palpedia+ for the source links and additional methodology notes.
 
-## Location data
+## Location and habitat data
 
 Location information distinguishes between different levels of precision:
 
 - Alpha/boss coordinates are displayed as exact listed coordinates when the source supplies them.
-- Regular habitat coordinates are approximate region-marker centres.
-- Approximate region markers should not be interpreted as exact spawn coordinates or region boundaries.
+- Pal profiles list named regular wild-spawn regions and link directly to that Pal's habitat overlay.
+- The interactive map can search by Pal name and render separate day and night habitat distributions from Palworld's Paldeck distribution table (`DT_PaldexDistributionData`).
+- The map supports both the Main Map and the separate World Tree coordinate space.
+- Approximate region-marker centres remain available as textual reference and should not be interpreted as exact habitat boundaries.
+
+The full Paldeck distribution table is comparatively large, so habitat data is loaded only when the habitat feature is used and then retained for the current browser session.
 
 ## Running Palpedia+
 
