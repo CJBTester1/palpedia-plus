@@ -203,6 +203,7 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
         <div><b>Pocketpair / Steam official patch notes</b><br><a href="https://steamcommunity.com/app/1623730/allnews/" target="_blank" rel="noopener">steamcommunity.com/app/1623730/allnews/</a></div>
         <div><b>PalDB version/update history</b><br><a href="https://paldb.cc/en/Version" target="_blank" rel="noopener">paldb.cc/en/Version</a></div>
         <div><b>Palworld KB structured 1.0 dataset</b> — stats, Partner Skills, work, drops, regions, Alpha coordinates, skills, passives.<br><a href="https://github.com/beliarance/palworld-kb" target="_blank" rel="noopener">github.com/beliarance/palworld-kb</a></div>
+        <div><b>palworld-save-pal extracted game data</b> — species-specific Friendship/Trust parameters used by the build calculator.<br><a href="https://github.com/oMaN-Rod/palworld-save-pal" target="_blank" rel="noopener">github.com/oMaN-Rod/palworld-save-pal</a></div>
         <div><b>PalworldBreeding.gg current methodology</b> — v1.0.5 game-file extraction, 44,850 parent pairs, gender-aware outcomes.<br><a href="https://palworldbreeding.gg/methodology" target="_blank" rel="noopener">palworldbreeding.gg/methodology</a></div>
         <div><b>Palworld Wiki / condensation mechanics</b><br><a href="https://palworld.wiki.gg/wiki/Condensation" target="_blank" rel="noopener">palworld.wiki.gg/wiki/Condensation</a></div>
       </div>
@@ -260,7 +261,7 @@ function imageMarkup(name,size=""){
   return `<img class="pal-img" loading="lazy" src="${esc(src)}" alt="${esc(name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="img-fallback" style="display:none">${initials}</div>`;
 }
 function palSearchBlob(p){
-  return [p.name,p.number,...p.elements,Object.keys(p.work||{}),p.partner_skill,p.partner_effect,...(p.drops||[]),...(p.regions||[]),...(p.alpha||[])].join(" ").toLowerCase();
+  return [p.name,p.number,...(p.elements||[]),Object.keys(p.work||{}),p.partner_skill,p.partner_effect,...(p.drops||[]),...(p.regions||[]),...(p.alpha||[])].join(" ").toLowerCase();
 }
 async function loadCore(){
   try{
@@ -366,7 +367,7 @@ async function ensureTrustData(){
 function trustStatsFor(p){return state.trustByName?.get(norm(p.name))||{hp:0,atk:0,def:0,work:0,id:""}}
 function passiveMods(selected){
   const out={hp:0,atk:0,def:0,work:0,move:0,stamina:0,element:[]};
-  for(const name of selected.filter(Boolean)){
+  for(const name of [...new Set(selected.filter(Boolean))]){
     const x=(state.passives?.passives||[]).find(v=>v.name===name);if(!x)continue;
     const e=String(x.effects||"");
     const grab=(re,key)=>{const m=e.match(re);if(m)out[key]+=Number(m[1])||0};
@@ -547,13 +548,12 @@ async function openPal(name){
   $("#drawerName").textContent=p.name;$("#drawerSub").textContent=`Paldeck #${p.number||"—"} · ${p.rarity||"Unknown rarity"}`;
   const elem=(p.elements||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("")||`<span class="chip">Typeless</span>`;
   const work=Object.entries(p.work||{}).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<span class="chip">${esc(k.replaceAll("_"," "))} ${fmt(v)}</span>`).join("");
-  const starRows=[0,1,2,3,4].map(s=>`<tr><td>${s?("★".repeat(s)):"0★"}</td><td>${fmt(starCoefficient(p.hp,s))}</td><td>${fmt(starCoefficient(p.atk,s))}</td><td>${fmt(starCoefficient(p.def,s))}</td><td>+${s*5}%</td></tr>`).join("");
+
   $("#drawer").innerHTML=`
     <div class="hero"><div>${imageMarkup(p.name)}</div><div><div class="hero-name">${esc(p.name)}</div><div class="chips">${elem}</div><div class="small">${esc(p.rarity||"")} ${p.size?`· Size ${esc(p.size)}`:""} ${p.nocturnal?"· Nocturnal":""}</div></div></div>
     <div class="panel"><h3>Core stats</h3><div class="kpi-grid"><div class="kpi"><strong>${fmt(p.hp)}</strong><span>Base HP coeff.</span></div><div class="kpi"><strong>${fmt(p.atk)}</strong><span>Base Attack</span></div><div class="kpi"><strong>${fmt(p.def)}</strong><span>Base Defense</span></div></div>
-      <div class="hr"></div><h3>Condensation / star coefficients</h3>
-      <table class="stat-table"><thead><tr><th>Stars</th><th>HP</th><th>ATK</th><th>DEF</th><th>Condense</th></tr></thead><tbody>${starRows}</tbody></table>
-      <div class="small">Species coefficients after the condensation multiplier. These are not your final levelled stats.</div>
+      <div class="hr"></div><h3>Condensation</h3>
+      <div class="notice">Condensation does not change the species HP/Attack/Defense coefficients shown above. It applies a +5% combat-stat multiplier per star (up to +20%), upgrades the Partner Skill each rank, and changes Work Suitability separately.</div>
       <div class="hr"></div><h3>Pal Build Calculator</h3>${renderCalculator(p)}
     </div>
     <div class="panel"><h3>Partner Skill</h3><b>${esc(p.partner_skill||"None listed")}</b><p>${esc(p.partner_effect||"No effect text in source.")}</p></div>
@@ -576,11 +576,12 @@ async function openPal(name){
       updateCalc();
     }));
     const pm=passiveMods(o.passives);
-    $("#otherMods").innerHTML=`<div class="chips"><span class="chip">Work Speed: ${pm.work+(o.workSoul*3)>=0?"+":""}${pm.work+(o.workSoul*3)}%</span><span class="chip">Movement: ${pm.move>=0?"+":""}${pm.move}%</span><span class="chip">Stamina: ${pm.stamina>=0?"+":""}${pm.stamina}%</span>${pm.element.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>`;
+    const workEffective=((1+pm.work/100)*(1+Math.max(0,Math.min(20,o.workSoul))*0.03)-1)*100;
+    $("#otherMods").innerHTML=`<div class="chips"><span class="chip">Work Speed modifier: ${workEffective>=0?"+":""}${Math.round(workEffective*10)/10}%</span><span class="chip">Movement: ${pm.move>=0?"+":""}${pm.move}%</span><span class="chip">Stamina: ${pm.stamina>=0?"+":""}${pm.stamina}%</span>${pm.element.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div><div class="small">Work Speed combines the passive modifier class and Soul modifier class multiplicatively. Work Suitability level is a separate system.</div>`;
   };
   Promise.all([ensurePassives(),ensureTrustData()]).then(()=>{
     const opts=(state.passives.passives||[]).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(x=>`<option value="${esc(x.name)}">${esc(x.name)} — ${esc(x.effects)}</option>`).join("");
-    document.querySelectorAll(".passive-build").forEach((s,i)=>{s.insertAdjacentHTML("beforeend",opts);s.addEventListener("change",updateCalc)});
+    document.querySelectorAll(".passive-build").forEach((s,i)=>{s.insertAdjacentHTML("beforeend",opts);s.addEventListener("change",()=>{const chosen=new Set([...document.querySelectorAll(".passive-build")].map(x=>x.value).filter(Boolean));document.querySelectorAll(".passive-build").forEach(sel=>[...sel.options].forEach(op=>{op.disabled=!!op.value&&chosen.has(op.value)&&sel.value!==op.value}));updateCalc()})});
     const t=trustStatsFor(p), ti=$("#trustInfo");
     if(ti)ti.innerHTML=`<b>${esc(p.name)} Friendship stats per Trust rank</b><br>HP +${fmt(t.hp)} · Attack +${fmt(t.atk)} · Defense +${fmt(t.def)}${t.work?` · Work/Craft +${fmt(t.work)}`:""}<br><span class="small">Trust is added to the species stat before level/Potential scaling and later permanent multipliers. At Trust Lv.10 these additions are ten times the values shown.</span>`;
     updateCalc();
