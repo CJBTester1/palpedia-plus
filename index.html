@@ -195,7 +195,7 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
         <div class="hr"></div>
         <p><b>Roster accounting:</b> the game/marketing count and data-file count differ. The app loads every record exposed by the current structured dataset, including variants/collaboration forms. Astralym is separately marked by source data as a Paldeck-only story boss and not obtainable.</p>
         <p><b>Coordinates:</b> Alpha strings use exact coordinates when supplied. Regular habitat coordinates are approximate region-marker centres, not invented spawn points or region boundaries.</p>
-        <p><b>Build calculator:</b> Potential is modelled separately for HP, Attack and Defense (0–100 talent = 0–30% level-scaling bonus). Condensation applies +5% HP/Attack/Defense per star, Souls provide 20 × 3% enhancement levels per stat, passive stat bonuses stack additively within their bonus category, and ordinary Alpha status applies the documented 1.2× HP scaling. Known legendary Alpha HP scaling exceptions are handled separately. Awakening is modelled as ×1.10 to HP/Attack/Defense from current extracted/community formula evidence. Trust is deliberately not included in the numeric result until species Friendship_Stat values can be sourced reliably.</p>
+        <p><b>Build calculator:</b> Potential is modelled separately for HP, Attack and Defense (0–100 talent = 0–30% level-scaling bonus). Condensation applies +5% HP/Attack/Defense per star, Souls provide 20 × 3% enhancement levels per stat, passive stat bonuses stack additively within their bonus category, and ordinary Alpha status applies the documented 1.2× HP scaling. Known legendary Alpha HP scaling exceptions are handled separately. Awakening is modelled as ×1.10 to HP/Attack/Defense from current extracted/community formula evidence. Trust uses per-species Friendship_Stat values loaded from the current palworld-save-pal game-data extraction and is added before level/Potential scaling and later permanent multipliers.</p>
         <p><b>Skill recommendations:</b> “recommended” skills are an explainable efficiency heuristic, not an official tier list. Natural skills are ranked mainly by power/cooldown with same-element skills used as a tie-breaker; where community-measured boss DPS exists, the measurement is displayed separately.</p>
       </div>
       <div class="panel source-list">
@@ -232,9 +232,11 @@ const URLS = {
   passives: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/passives.json",
   dps: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/skill_dps_meta.json",
   breedingPrimary: "https://palworldbreeding.gg/breeding-chart.csv",
-  breedingFallback: "https://raw.githubusercontent.com/JohnnyDalvi/Palworld_Smart_Breeder/main/data/breeding/breeding_pairs.csv"
+  breedingFallback: "https://raw.githubusercontent.com/JohnnyDalvi/Palworld_Smart_Breeder/main/data/breeding/breeding_pairs.csv",
+  trustPals: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json/pals.json",
+  trustNames: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json/l10n/en/pals.json"
 };
-const state = {pals:[], palMap:new Map(), regions:{}, locationDetails:{}, iconUrls:new Map(), active:null, passives:null, dps:null, breeding:null, breedingByChild:null, visible:48, filtered:[], iconIds:new Map()};
+const state = {pals:[], palMap:new Map(), regions:{}, locationDetails:{}, iconUrls:new Map(), active:null, passives:null, dps:null, breeding:null, breedingByChild:null, trustByName:null, visible:48, filtered:[], iconIds:new Map()};
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
 const norm = s => String(s ?? "").trim().toLowerCase();
@@ -344,6 +346,24 @@ function parseAlpha(s){
 }
 function starCoefficient(v,stars){return Math.round((Number(v)||0)*(1+stars*.05)*10)/10}
 const KNOWN_ALPHA_HP_SCALE={"frostallion":3,"frostallion noct":3,"jetragon":3,"paladius":2,"necromus":2};
+async function ensureTrustData(){
+  if(state.trustByName)return;
+  const [raw,names]=await Promise.all([getJSON(URLS.trustPals),getJSON(URLS.trustNames)]);
+  const map=new Map();
+  for(const [id,v] of Object.entries(raw||{})){
+    const display=names?.[id]?.localized_name;
+    if(!display)continue;
+    map.set(norm(display),{
+      hp:Number(v.friendship_hp)||0,
+      atk:Number(v.friendship_shotattack)||0,
+      def:Number(v.friendship_defense)||0,
+      work:Number(v.friendship_craftspeed)||0,
+      id
+    });
+  }
+  state.trustByName=map;
+}
+function trustStatsFor(p){return state.trustByName?.get(norm(p.name))||{hp:0,atk:0,def:0,work:0,id:""}}
 function passiveMods(selected){
   const out={hp:0,atk:0,def:0,work:0,move:0,stamina:0,element:[]};
   for(const name of selected.filter(Boolean)){
@@ -367,18 +387,21 @@ function palBuildStats(p,o){
   const soul=k=>1+Math.max(0,Math.min(20,+o[k]||0))*.03;
   const cond=1+stars*.05, pm=passiveMods(o.passives||[]);
   const alphaScale=o.alpha?(KNOWN_ALPHA_HP_SCALE[norm(p.name)]||1.2):1;
-  const speciesHp=(+p.hp||0)*alphaScale;
+  const trust=trustStatsFor(p), tr=Math.max(0,Math.min(10,+o.trust||0));
+  const speciesHp=(+p.hp||0)*alphaScale + trust.hp*tr;
+  const speciesAtk=(+p.atk||0) + trust.atk*tr;
+  const speciesDef=(+p.def||0) + trust.def*tr;
   const pre={
     hp:Math.floor(500+5*L+speciesHp*.5*L*pot("hpPot")),
-    atk:Math.floor(100+(+p.atk||0)*.075*L*pot("atkPot")),
-    def:Math.floor(50+(+p.def||0)*.075*L*pot("defPot"))
+    atk:Math.floor(100+speciesAtk*.075*L*pot("atkPot")),
+    def:Math.floor(50+speciesDef*.075*L*pot("defPot"))
   };
   const awake=o.awakened?1.1:1;
   return {
     hp:Math.floor(pre.hp*(1+pm.hp/100)*soul("hpSoul")*cond*awake),
     atk:Math.floor(pre.atk*(1+pm.atk/100)*soul("atkSoul")*cond*awake),
     def:Math.floor(pre.def*(1+pm.def/100)*soul("defSoul")*cond*awake),
-    pre,pm,cond,awake,alphaScale,L,stars
+    pre,pm,cond,awake,alphaScale,L,stars,trust,tr
   };
 }
 function workSuitabilityHTML(p,stars){
@@ -417,7 +440,7 @@ function renderCalculator(p){
     <div class="two">${[0,1,2,3].map(i=>`<select class="select passive-build" id="passive${i}"><option value="">Passive ${i+1}: none</option></select>`).join("")}</div>
     <div class="hr"></div><h3>Trust</h3>
     <select class="select" id="trustLevel">${Array.from({length:11},(_,i)=>`<option value="${i}">Trust Lv.${i}</option>`).join("")}</select>
-    <div class="notice warning" style="margin-top:8px">Trust is shown as a build input but is <b>not applied to the numeric result yet</b>. Exact calculation requires each species' Friendship_Stat values, which are not present in Palpedia+'s current structured dataset. Guessing them would make the calculator inaccurate.</div>
+    <div class="notice" id="trustInfo" style="margin-top:8px">Loading species-specific Friendship stats…</div>
     <div class="hr"></div><h3>Calculated combat stats</h3><div id="actualStats"></div>
     <div class="hr"></div><h3>Work Suitability & Applied Technique books</h3><div id="workBuild"></div>
     <div class="hr"></div><h3>Other calculated modifiers</h3><div id="otherMods"></div>
@@ -426,7 +449,7 @@ function renderCalculator(p){
 }
 function actualStatsTable(p,o){
   const v=palBuildStats(p,o), ps=v.pm;
-  const trustNote=o.trust? ` · Trust Lv.${o.trust} selected but excluded`:"";
+  const trustNote=o.trust? ` · Trust Lv.${o.trust}: +${fmt(v.trust.hp*o.trust)} HP / +${fmt(v.trust.atk*o.trust)} ATK / +${fmt(v.trust.def*o.trust)} DEF species scaling`:"";
   return `<div class="kpi-grid"><div class="kpi"><strong>${fmt(v.hp)}</strong><span>HP</span></div><div class="kpi"><strong>${fmt(v.atk)}</strong><span>Attack</span></div><div class="kpi"><strong>${fmt(v.def)}</strong><span>Defense</span></div></div>
   <div class="breakdown" style="margin-top:8px">Level ${v.L} · Potential HP/ATK/DEF ${o.hpPot}/${o.atkPot}/${o.defPot} · Condensation +${v.stars*5}% · Souls HP/ATK/DEF +${o.hpSoul*3}/+${o.atkSoul*3}/+${o.defSoul*3}% · Passives HP/ATK/DEF ${ps.hp>=0?"+":""}${ps.hp}%/${ps.atk>=0?"+":""}${ps.atk}%/${ps.def>=0?"+":""}${ps.def}%${o.alpha?` · Alpha HP scaling ×${v.alphaScale}`:""}${o.awakened?" · Awakening ×1.10":""}${trustNote}</div>`;
 }
@@ -525,11 +548,13 @@ async function openPal(name){
     $("#otherMods").innerHTML=`<div class="chips"><span class="chip">Work Speed: ${pm.work+(o.workSoul*3)>=0?"+":""}${pm.work+(o.workSoul*3)}%</span><span class="chip">Movement: ${pm.move>=0?"+":""}${pm.move}%</span><span class="chip">Stamina: ${pm.stamina>=0?"+":""}${pm.stamina}%</span>${pm.element.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>`;
     document.querySelectorAll(".book-level").forEach(s=>s.addEventListener("change",()=>{}));
   };
-  ensurePassives().then(()=>{
+  Promise.all([ensurePassives(),ensureTrustData()]).then(()=>{
     const opts=(state.passives.passives||[]).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(x=>`<option value="${esc(x.name)}">${esc(x.name)} — ${esc(x.effects)}</option>`).join("");
     document.querySelectorAll(".passive-build").forEach((s,i)=>{s.insertAdjacentHTML("beforeend",opts);s.addEventListener("change",updateCalc)});
+    const t=trustStatsFor(p), ti=$("#trustInfo");
+    if(ti)ti.innerHTML=`<b>${esc(p.name)} Friendship stats per Trust rank</b><br>HP +${fmt(t.hp)} · Attack +${fmt(t.atk)} · Defense +${fmt(t.def)}${t.work?` · Work/Craft +${fmt(t.work)}`:""}<br><span class="small">Trust is added to the species stat before level/Potential scaling and later permanent multipliers. At Trust Lv.10 these additions are ten times the values shown.</span>`;
     updateCalc();
-  }).catch(e=>{console.error(e);updateCalc()});
+  }).catch(e=>{console.error(e);const ti=$("#trustInfo");if(ti)ti.innerHTML=`<span class="error">Trust dataset unavailable: ${esc(e.message)}. Trust is temporarily treated as 0.</span>`;updateCalc()});
   ["calcLevel","hpPot","atkPot","defPot"].forEach(id=>$("#"+id).addEventListener("input",updateCalc));
   ["hpSoul","atkSoul","defSoul","workSoul","trustLevel","alphaToggle","awakeToggle"].forEach(id=>$("#"+id).addEventListener("change",updateCalc));
   document.querySelectorAll(".star-btn").forEach(b=>b.addEventListener("click",()=>{
