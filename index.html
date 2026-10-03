@@ -59,6 +59,14 @@ nav::-webkit-scrollbar{display:none}
 .two{display:grid;grid-template-columns:1fr;gap:10px}
 .breed-result{margin-top:12px;min-height:52px}
 .result-pal{display:flex;flex-direction:column;gap:8px;align-items:flex-start}.result-pal .pal-img,.result-pal .img-fallback{width:56px;height:56px;flex:0 0 auto}
+.item-row{display:grid;grid-template-columns:48px minmax(0,1fr);gap:12px;align-items:center;width:100%;text-align:left;color:inherit;font:inherit;cursor:pointer}
+.item-img{width:48px;height:48px;object-fit:contain;border-radius:10px;background:#0a1424}
+.item-img.big{width:84px;height:84px}
+.item-row .img-fallback.item-img{display:grid;place-items:center}
+.item-blurb{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.chip-link{color:var(--text);font:inherit;font-size:12px;cursor:pointer}.chip-link:hover{border-color:var(--accent,#5fb4ff)}
+.pal-chips{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.pal-chip .pal-img,.pal-chip .img-fallback{width:40px;height:40px;flex:0 0 auto}
 .pal-link{display:flex;gap:12px;align-items:center;background:none;border:0;padding:0;color:var(--text);font:inherit;cursor:pointer;text-align:left}.pal-link b{text-decoration:underline;text-decoration-color:var(--accent)}
 .result-card{padding:12px;border-radius:12px;border:1px solid #345272;background:#0c192c}
 .small{font-size:12px;color:var(--muted)}
@@ -176,6 +184,7 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
     <button class="tab active" data-tab="pals" type="button">Pals</button>
     <button class="tab" data-tab="map" type="button">Map</button>
     <button class="tab" data-tab="breeding" type="button">Breeding</button>
+    <button class="tab" data-tab="items" type="button">Items</button>
     <button class="tab" data-tab="passives" type="button">Passives</button>
     <button class="tab" data-tab="sources" type="button">Sources & methodology</button>
   </nav>
@@ -245,6 +254,20 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
       </div>
     </section>
 
+    <section class="section" id="items">
+      <div class="panel">
+        <h2>Item library</h2>
+        <p class="small">Materials, food, weapons, armor, accessories and more. Open an item for its recipe, which Pals drop or farm it, and other sources.</p>
+        <div class="controls" style="position:static;padding:0;margin-top:8px">
+          <input class="search" id="itemSearch" type="search" placeholder="Search items…" autocomplete="off" aria-label="Search items">
+          <div class="filter-grid"><select class="select" id="itemCategory" aria-label="Filter by category"><option value="">All categories</option></select></div>
+        </div>
+      </div>
+      <div class="meta-line"><span id="itemCount"></span></div>
+      <div class="list" id="itemList"><div class="empty">Open this tab to load the item library.</div></div>
+      <button class="loadmore" id="itemMore" type="button" hidden>Show more</button>
+    </section>
+
     <section class="section" id="passives">
       <div class="panel">
         <h2>Passive Skill library</h2>
@@ -270,6 +293,7 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
         <div><b>PalDB version/update history</b><br><a href="https://paldb.cc/en/Version" target="_blank" rel="noopener">paldb.cc/en/Version</a></div>
         <div><b>Palworld KB structured 1.0 dataset</b> — stats, Partner Skills, work, drops, regions, Alpha coordinates, skills, passives.<br><a href="https://github.com/beliarance/palworld-kb" target="_blank" rel="noopener">github.com/beliarance/palworld-kb</a></div>
         <div><b>palworld-save-pal extracted game data</b> — species-specific Friendship/Trust parameters used by the build calculator.<br><a href="https://github.com/oMaN-Rod/palworld-save-pal" target="_blank" rel="noopener">github.com/oMaN-Rod/palworld-save-pal</a></div>
+        <div><b>Item library</b> — recipes, stations, drop and merchant sources from the Palworld KB items table (scraped from paldb.cc); descriptions and icons from palworld-save-pal and the KB icon table. Ranch production comes from the Pal records.<br><a href="https://github.com/beliarance/palworld-kb" target="_blank" rel="noopener">github.com/beliarance/palworld-kb</a></div>
         <div><b>PalworldBreeding.gg current methodology</b> — v1.0.5 game-file extraction, 44,850 parent pairs, gender-aware outcomes.<br><a href="https://palworldbreeding.gg/methodology" target="_blank" rel="noopener">palworldbreeding.gg/methodology</a></div>
         <div><b>Palworld Wiki / condensation mechanics</b><br><a href="https://palworld.wiki.gg/wiki/Condensation" target="_blank" rel="noopener">palworld.wiki.gg/wiki/Condensation</a></div>
       </div>
@@ -297,6 +321,8 @@ const URLS = {
   palLocations: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/pal_locations.json",
   skills: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/active_skills.json",
   passives: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/passives.json",
+  items: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/items.json",
+  itemText: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json/l10n/en/items.json",
   dps: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/skill_dps_meta.json",
   breedingPrimary: "https://palworldbreeding.gg/breeding-chart.csv",
   breedingFallback: "https://raw.githubusercontent.com/JohnnyDalvi/Palworld_Smart_Breeder/main/data/breeding/breeding_pairs.csv",
@@ -403,6 +429,7 @@ async function loadCore(){
     state.regions=reg.regions||{};
     state.locationDetails=loc.pals||{};
     state.iconUrls=new Map(Object.entries(icons.pals||{}));
+    state.itemIcons=new Map(Object.entries(icons.items||{}));
     state.pals=Object.entries(idx.pals||{}).map(([name,p])=>({name,...p,_search:""}));
     state.pals.forEach(p=>p._search=palSearchBlob(p));
     state.palMap=new Map(state.pals.map(p=>[norm(p.name),p]));
@@ -818,6 +845,72 @@ async function renderPassives(){
 }
 
 
+// ---------- Items ----------
+const ITEM_CATS={key_item:"Key items",consumable:"Consumables",material:"Materials",ingredient:"Food ingredients",weapon:"Weapons",armor:"Armor",accessory:"Accessories",other:"Other",ammo:"Ammo",sphere:"Pal Spheres",technology:"Technology",medicine:"Medicine"};
+const itemCat=c=>ITEM_CATS[c]||c;
+state.itemsVisible=48;
+async function ensureItems(){
+  if(state.items)return;
+  const [kb,text]=await Promise.all([getJSON(URLS.items),getJSON(URLS.itemText).catch(()=>({}))]);
+  const desc=new Map();
+  for(const v of Object.values(text)){if(v&&v.localized_name&&v.description&&!desc.has(v.localized_name))desc.set(v.localized_name,String(v.description).replace(/<[^>]+>/g,"").trim())}
+  const items=(kb.items||[]).map(i=>({...i,desc:desc.get(i.name)||i.effect||"",_s:norm(i.name+" "+itemCat(i.category))}));
+  const used=new Map();
+  items.forEach(i=>Object.keys(i.recipe?.materials||{}).forEach(m=>{(used.get(m)||used.set(m,[]).get(m)).push(i.name)}));
+  items.forEach(i=>i.usedIn=used.get(i.name)||[]);
+  state.itemMap=new Map(items.map(i=>[norm(i.name),i]));
+  state.items=items;
+}
+function itemImg(name,cls="item-img"){
+  const src=state.itemIcons&&state.itemIcons.get(name);
+  const initials=esc(name.replace(/[^A-Za-z0-9 ]/g,"").split(/\s+/).map(x=>x[0]).join("").slice(0,2));
+  if(!src)return `<div class="img-fallback ${cls}">${initials}</div>`;
+  return `<img class="${cls}" loading="lazy" src="${esc(src)}" alt="" onerror="this.outerHTML='<div class=&quot;img-fallback ${cls}&quot;>${initials}</div>'">`;
+}
+const itemBlurb=i=>{const t=i.desc||"";return t.length>140?t.slice(0,137).replace(/\s+\S*$/,"")+"…":t};
+async function renderItems(reset){
+  const box=$("#itemList");
+  if(!state.items){box.innerHTML=`<div class="empty">Loading item library…</div>`;try{await ensureItems()}catch(e){box.innerHTML=`<div class="notice error">${esc(e.message)}</div>`;return}
+    const sel=$("#itemCategory");[...new Set(state.items.map(i=>i.category))].sort((a,b)=>itemCat(a).localeCompare(itemCat(b))).forEach(c=>sel.insertAdjacentHTML("beforeend",`<option value="${esc(c)}">${esc(itemCat(c))}</option>`));
+    attachSuggest($("#itemSearch"),()=>state.items.map(i=>({label:i.name,kind:itemCat(i.category)})),()=>renderItems(true));
+  }
+  if(reset)state.itemsVisible=48;
+  const q=norm($("#itemSearch").value),cat=$("#itemCategory").value;
+  const arr=state.items.filter(i=>(!cat||i.category===cat)&&(!q||i._s.includes(q))).sort((a,b)=>{const ra=q?(norm(a.name).startsWith(q)?0:1):0,rb=q?(norm(b.name).startsWith(q)?0:1):0;return ra-rb||a.name.localeCompare(b.name)});
+  $("#itemCount").textContent=`${arr.length.toLocaleString()} ${arr.length===1?"item":"items"}`;
+  box.innerHTML=arr.slice(0,state.itemsVisible).map(i=>`<button type="button" class="row item-row" data-open-item="${esc(i.name)}">${itemImg(i.name)}<div><strong>${esc(i.name)}</strong><span class="small">${esc(itemCat(i.category))}${i.recipe?" · Craftable":""}</span><div class="small item-blurb">${esc(itemBlurb(i))}</div></div></button>`).join("")||`<div class="empty">No items match.</div>`;
+  $("#itemMore").hidden=arr.length<=state.itemsVisible;
+}
+function itemLink(n){return state.itemMap.has(norm(n))?`<button type="button" class="chip chip-link" data-open-item="${esc(n)}">${esc(n)}</button>`:`<span class="chip">${esc(n)}</span>`}
+async function openItem(name){
+  if(!state.items){try{await ensureItems()}catch(e){return}}
+  const i=state.itemMap.get(norm(name));if(!i)return;
+  const palNames=[...state.palMap.values()].map(p=>p.name).sort((a,b)=>b.length-a.length);
+  const drops=new Map();
+  (i.obtained_from||[]).forEach(s=>{const m=/^Dropped by (.+?)(?: x[\d–-]+)?(?: \((\d+(?:\.\d+)?)%\))?$/.exec(s);if(!m)return;const p=state.palMap.get(norm(m[1]));if(p&&!drops.has(p.name))drops.set(p.name,m[2]?m[2]+"%":"")});
+  state.pals.forEach(p=>{if((p.drops||[]).includes(i.name)&&!drops.has(p.name))drops.set(p.name,"")});
+  const ranchRe=/^Ranch: (.+?)(?: \([^)]*\))?$/;
+  const farmSet=new Set(state.pals.filter(p=>(p.ranch_produce||[]).includes(i.name)).map(p=>p.name));
+  (i.obtained_from||[]).forEach(s=>{const m=ranchRe.exec(s);if(m)m[1].split(/,\s*/).forEach(n=>{const p=state.palMap.get(norm(n));if(p)farmSet.add(p.name)})});
+  const farm=[...farmSet];
+  const palChip=(n,extra)=>`<button type="button" class="pal-link pal-chip" data-open-pal="${esc(n)}">${imageMarkup(n)}<span><b>${esc(n)}</b>${extra?`<span class="small"> ${esc(extra)}</span>`:""}</span></button>`;
+  const other=(i.obtained_from||[]).filter(s=>{const m=/^Dropped by (.+?)(?: x[\d–-]+)?(?: \(\d+(?:\.\d+)?%\))?$/.exec(s);return !(m&&state.palMap.has(norm(m[1])))&&!ranchRe.test(s)});
+  const otherShown=[...new Set(other)].slice(0,12);
+  const mats=Object.entries(i.recipe?.materials||{});
+  const eff=String(i.effect||"").replace(/\s+/g," ").trim(),dsc=(i.desc||"").replace(/\s+/g," ").trim(),extra=eff.startsWith(dsc)?eff.slice(dsc.length).trim():eff;
+  $("#drawerName").textContent=i.name;$("#drawerSub").textContent=itemCat(i.category);
+  $("#drawer").innerHTML=`
+    <div class="hero"><div>${itemImg(i.name,"item-img big")}</div><div><div class="hero-name">${esc(i.name)}</div><div class="chips"><span class="chip">${esc(itemCat(i.category))}</span>${i.tech_level?`<span class="chip">Tech Lv. ${esc(i.tech_level)}</span>`:""}</div></div></div>
+    ${i.desc?`<div class="panel"><h3>Description</h3><p>${esc(i.desc)}</p></div>`:""}
+    ${extra?`<div class="panel"><h3>Effect</h3><p>${esc(extra)}</p></div>`:""}
+    <div class="panel"><h3>Crafting</h3>${i.recipe?`<p class="small">Station: <b>${esc(i.recipe.station||"—")}</b></p><div class="chips">${mats.map(([n,c])=>`${itemLink(n).replace("</",` ×${fmt(c)}</`)}`).join("")||`<span class="small">No ingredients listed.</span>`}</div>${i.notes?`<p class="small">${esc(i.notes)}</p>`:""}`:`<p class="small">Base item: not crafted${i.category==="material"||i.category==="ingredient"?" — gathered, dropped or bought":""}.</p>`}</div>
+    <div class="panel"><h3>Dropped by Pals</h3>${drops.size?`<div class="pal-chips">${[...drops].map(([n,p])=>palChip(n,p)).join("")}</div>`:`<p class="small">No Pal drops listed.</p>`}</div>
+    <div class="panel"><h3>Farmed by Pals (ranch)</h3>${farm.length?`<div class="pal-chips">${farm.map(n=>palChip(n,"")).join("")}</div>`:`<p class="small">No Pal produces this at a ranch.</p>`}</div>
+    ${otherShown.length?`<div class="panel"><h3>Other sources</h3><div class="list">${otherShown.map(s=>`<div class="small">${esc(s)}</div>`).join("")}${other.length>otherShown.length?`<div class="small">…and ${other.length-otherShown.length} more</div>`:""}</div></div>`:""}
+    ${i.usedIn.length?`<div class="panel"><h3>Used to craft</h3><div class="chips">${i.usedIn.slice(0,24).map(itemLink).join("")}${i.usedIn.length>24?`<span class="small">…and ${i.usedIn.length-24} more</span>`:""}</div></div>`:""}`;
+  const d=$("#palDialog");if(!d.open)d.showModal();d.scrollTop=0;
+}
+
 // ---------- Interactive map (Leaflet, CRS.Simple) ----------
 // Tile pyramid: zoom 0–4, 512px tiles, 8192px at zoom 4. Map horizontal axis = world +Y, vertical axis = world -X (north up).
 const MAP_SIZE=8192,MAP_NATIVE_ZOOM=4,MAP_UNITS=MAP_SIZE/2**MAP_NATIVE_ZOOM;
@@ -1151,16 +1244,22 @@ function switchTab(id){
   document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
   document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id===id));
   if(id==="passives")renderPassives();
+  if(id==="items")renderItems(true);
   if(id==="map")ensureMap().catch(e=>{console.error(e);mapNote("Map could not start: "+e.message,"bad")});
 }
 document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
 ["search","elementFilter","mountFilter","workFilter","sort"].forEach(id=>$("#"+id).addEventListener(id==="search"?"input":"change",()=>renderPals()));
 $("#loadMore").addEventListener("click",()=>{state.visible+=48;renderPals(false)});
+$("#itemSearch").addEventListener("input",()=>renderItems(true));
+$("#itemCategory").addEventListener("change",()=>renderItems(true));
+$("#itemMore").addEventListener("click",()=>{state.itemsVisible+=48;renderItems(false)});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-open-item]");if(b)openItem(b.dataset.openItem)});
 $("#closeDialog").addEventListener("click",()=>$("#palDialog").close());
 $("#palDialog").addEventListener("click",e=>{if(e.target===$("#palDialog"))$("#palDialog").close()});
 $("#breedPairBtn").addEventListener("click",()=>pairLookup().catch(e=>$("#pairResult").innerHTML=`<div class="notice error">${esc(e.message)}</div>`));
 $("#targetBreedBtn").addEventListener("click",()=>targetLookup().catch(e=>$("#targetResult").innerHTML=`<div class="notice error">${esc(e.message)}</div>`));
 $("#passiveSearch").addEventListener("input",renderPassives);
+$("#drawer").addEventListener("click",e=>{const b=e.target.closest("[data-open-pal]");if(b)openPal(b.dataset.openPal)});
 $("#pairResult").addEventListener("click",e=>{const b=e.target.closest("[data-open-pal]");if(b)openPal(b.dataset.openPal)});
 initMapUI();
 loadCore();
