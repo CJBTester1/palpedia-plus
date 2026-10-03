@@ -118,7 +118,18 @@ dialog::backdrop{background:rgba(0,0,0,.68)}
 .map-coords{position:absolute;z-index:9;right:10px;bottom:10px;background:rgba(8,17,31,.88);border:1px solid var(--line);border-radius:9px;padding:5px 8px;font-size:11px;color:var(--muted)}
 .map-loading{position:absolute;z-index:7;inset:0;display:grid;place-items:center;background:#050b13;color:var(--muted)}.map-fullscreen{position:fixed!important;inset:0!important;z-index:1000!important;border-radius:0!important;border:0!important}.map-fullscreen .map-viewport{height:calc(100dvh - 61px);min-height:0}
 .map-close-full{display:none}.map-fullscreen .map-close-full{display:inline-flex;align-items:center;justify-content:center;width:42px;padding:0;font-size:23px;margin-left:auto}
-@media(max-width:600px){.map-toolbar{gap:6px}.map-btn{padding:0 9px}.map-viewport{min-height:58vh}.map-marker{width:27px;height:27px}}
+.habitat-controls{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:14px}
+.habitat-field{display:grid;gap:6px;min-width:0}.habitat-label{font-size:12px;font-weight:750;color:var(--muted)}
+.habitat-search{width:100%;min-width:0;min-height:46px;border:1px solid var(--line);border-radius:11px;background:#0d1829!important;color:var(--text)!important;-webkit-text-fill-color:var(--text);caret-color:var(--accent);padding:0 12px;outline:none;appearance:none;-webkit-appearance:none}
+.habitat-search::placeholder{color:#71869f;opacity:1}.habitat-search:focus{outline:3px solid rgba(88,215,255,.35);outline-offset:2px;border-color:#3d688d;background:#0d1829!important}
+.habitat-search:-webkit-autofill,.habitat-search:-webkit-autofill:hover,.habitat-search:-webkit-autofill:focus{-webkit-text-fill-color:var(--text);box-shadow:0 0 0 1000px #0d1829 inset;caret-color:var(--accent)}
+.habitat-time{display:flex;gap:8px;flex-wrap:wrap}.habitat-check{display:flex;align-items:center;gap:8px;min-height:42px;padding:0 12px;border:1px solid var(--line);border-radius:11px;background:#0d1829;color:var(--text);font-weight:650}
+.habitat-check input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
+.habitat-actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:stretch}
+.habitat-actions .loadmore,.habitat-actions .map-btn{margin:0;min-height:46px}.habitat-actions .map-btn{padding:0 18px;border-radius:12px}
+#habitatStatus{margin-top:10px;padding-top:10px;border-top:1px solid rgba(38,58,87,.65)}
+@media(min-width:640px){.habitat-controls{grid-template-columns:minmax(260px,1.4fr) minmax(220px,1fr);align-items:end}.habitat-actions{grid-column:1/-1;max-width:520px}}
+@media(max-width:600px){.map-toolbar{gap:7px;padding:10px}.map-toolbar .map-btn{flex:1 1 calc(50% - 7px);padding:0 10px;white-space:nowrap}.map-toolbar #mapFilterBtn{flex:0 1 auto}.map-toolbar #mapFullscreenBtn{flex:0 1 auto}.map-viewport{min-height:58vh}.map-marker{width:27px;height:27px}.habitat-actions{grid-template-columns:minmax(0,1fr) auto}}
 
 footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
 @media(min-width:640px){
@@ -172,7 +183,29 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
 
 
     <section class="section" id="map">
-      <div class="panel"><h2>Interactive Palworld map</h2><p class="small">Explore the Main Map and separate World Tree map. Drag to pan, scroll or use ± to zoom, tap markers for coordinates, and filter marker categories.</p><div class="filters" style="margin-top:10px"><div><label for="habitatPalSearch">Pal habitat</label><input class="input" id="habitatPalSearch" list="habitatPalNames" placeholder="Search a Pal"><datalist id="habitatPalNames"></datalist></div><div><label>Habitat time</label><div style="display:flex;gap:12px;padding:10px 0"><label><input type="checkbox" id="habitatDay" checked> Day</label><label><input type="checkbox" id="habitatNight" checked> Night</label></div></div><button class="loadmore" id="showHabitatBtn" type="button">Show habitat</button><button class="map-btn" id="clearHabitatBtn" type="button">Clear</button></div><div id="habitatStatus" class="small">Search for a Pal to overlay its regular wild habitat.</div></div>
+      <div class="panel">
+        <h2>Interactive Palworld map</h2>
+        <p class="small">Explore the Main Map and separate World Tree map. Drag to pan, scroll or use ± to zoom, tap markers for coordinates, and filter marker categories.</p>
+        <div class="habitat-controls">
+          <div class="habitat-field">
+            <label class="habitat-label" for="habitatPalSearch">Pal habitat</label>
+            <input class="habitat-search" id="habitatPalSearch" type="search" list="habitatPalNames" placeholder="Search a Pal…" autocomplete="off" spellcheck="false">
+            <datalist id="habitatPalNames"></datalist>
+          </div>
+          <div class="habitat-field">
+            <span class="habitat-label">Habitat time</span>
+            <div class="habitat-time">
+              <label class="habitat-check"><input type="checkbox" id="habitatDay" checked> Day</label>
+              <label class="habitat-check"><input type="checkbox" id="habitatNight" checked> Night</label>
+            </div>
+          </div>
+          <div class="habitat-actions">
+            <button class="loadmore" id="showHabitatBtn" type="button">Show habitat</button>
+            <button class="map-btn" id="clearHabitatBtn" type="button">Clear</button>
+          </div>
+        </div>
+        <div id="habitatStatus" class="small">Search for a Pal to overlay its regular wild habitat.</div>
+      </div>
       <div class="map-shell" id="mapShell">
         <div class="map-toolbar"><button class="map-btn active" id="mainMapBtn" type="button">Main Map</button><button class="map-btn" id="treeMapBtn" type="button">World Tree</button><button class="map-btn" id="mapFilterBtn" type="button">Filters</button><button class="map-btn" id="mapFullscreenBtn" type="button">Full screen</button><button class="map-btn map-close-full" id="mapFullscreenClose" type="button" aria-label="Close full screen">×</button></div>
         <div class="map-viewport" id="mapViewport" aria-label="Interactive Palworld map"><div class="map-stage" id="mapStage"></div><div class="map-loading" id="mapLoading">Open the Map tab to load map data.</div><div class="map-filter-panel" id="mapFilters" hidden></div><div class="map-zoom"><button id="mapZoomIn" type="button" aria-label="Zoom in">+</button><button id="mapZoomOut" type="button" aria-label="Zoom out">−</button></div><div class="map-coords" id="mapCoords">X — · Y —</div></div>
