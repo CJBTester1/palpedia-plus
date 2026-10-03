@@ -384,16 +384,16 @@ function attachSuggest(input,getItems,onPick){
     if(!q){hide();return}
     const seen=new Set(),hits=[];
     for(const it of getItems()){
-      const l=norm(it.label),key=l+"|"+it.kind;
+      const raw=String(it.label??""),l=raw.toLowerCase(),key=norm(raw)+"|"+it.kind;
       if(seen.has(key))continue;
       const at=l.indexOf(q);if(at<0)continue;
       seen.add(key);
-      hits.push({...it,rank:at===0?0:/[\s\-(]/.test(l[at-1])?1:2,at,len:l.length});
+      hits.push({...it,rank:at===0?0:/[\s\-(]/.test(l[at-1])?1:2,at,len:l.length,hl:l.length===raw.length});
     }
     hits.sort((a,b)=>a.rank-b.rank||a.label.localeCompare(b.label)||a.kind.localeCompare(b.kind));
     rows=hits.slice(0,8);
     if(!rows.length){hide();return}
-    ul.innerHTML=rows.map((r,i)=>`<li role="option" data-i="${i}"><span>${esc(r.label.slice(0,r.at))}<mark>${esc(r.label.slice(r.at,r.at+q.length))}</mark>${esc(r.label.slice(r.at+q.length))}</span><span class="k">${esc(r.kind)}</span></li>`).join("");
+    ul.innerHTML=rows.map((r,i)=>`<li role="option" data-i="${i}"><span>${r.hl?`${esc(r.label.slice(0,r.at))}<mark>${esc(r.label.slice(r.at,r.at+q.length))}</mark>${esc(r.label.slice(r.at+q.length))}`:esc(r.label)}</span><span class="k">${esc(r.kind)}</span></li>`).join("");
     place();ul.hidden=false;cur=-1;input.setAttribute("aria-expanded","true");
   };
   input.addEventListener("input",show);
@@ -785,8 +785,12 @@ function parseCSV(text){
   const h=rows.shift()||[];
   return rows.filter(r=>r.length>=h.length).map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]||""])));
 }
-async function ensureBreeding(){
-  if(state.breeding)return;
+function ensureBreeding(){
+  if(state.breeding)return Promise.resolve();
+  if(!state.breedingLoading)state.breedingLoading=loadBreeding().catch(e=>{state.breedingLoading=null;throw e});
+  return state.breedingLoading;
+}
+async function loadBreeding(){
   status("Loading exact breeding table","About 44,850 parent pairs are being loaded on demand. This is intentionally deferred for mobile performance.");
   let text=null,source="";
   try{
@@ -843,7 +847,7 @@ async function renderPassives(){
   const box=$("#passiveList");
   if(!state.passives){box.innerHTML=`<div class="empty">Loading current passive table…</div>`;try{await ensurePassives()}catch(e){box.innerHTML=`<div class="notice error">${esc(e.message)}</div>`;return}}
   const q=norm($("#passiveSearch").value);
-  const arr=(state.passives.passives||[]).filter(x=>!q||norm([x.name,x.effects,x.category].join(" ")).includes(q)).sort((a,b)=>b.tier-a.tier||a.name.localeCompare(b.name));
+  const arr=(state.passives.passives||[]).filter(x=>!q||norm([x.name,x.effects,x.category].join(" ")).includes(q)).sort((a,b)=>(+b.tier||0)-(+a.tier||0)||a.name.localeCompare(b.name));
   box.innerHTML=arr.map(x=>`<div class="row passive"><div><strong>${esc(x.name)}</strong><div class="small">${esc(x.effects)}</div><div class="small">${esc(x.category||"")} ${x.breedable===true?"· breedable":x.breedable===false?"· not breedable":""} ${x.world_tree_set?"· World Tree":""}</div></div><div class="tier">T${fmt(x.tier)}</div></div>`).join("")||`<div class="empty">No passives match.</div>`;
 }
 
@@ -852,8 +856,12 @@ async function renderPassives(){
 const ITEM_CATS={key_item:"Key items",consumable:"Consumables",material:"Materials",ingredient:"Food ingredients",weapon:"Weapons",armor:"Armor",accessory:"Accessories",other:"Other",ammo:"Ammo",sphere:"Pal Spheres",technology:"Technology",medicine:"Medicine"};
 const itemCat=c=>ITEM_CATS[c]||c;
 state.itemsVisible=48;
-async function ensureItems(){
-  if(state.items)return;
+function ensureItems(){
+  if(state.items)return Promise.resolve();
+  if(!state.itemsLoading)state.itemsLoading=loadItems().catch(e=>{state.itemsLoading=null;throw e});
+  return state.itemsLoading;
+}
+async function loadItems(){
   const [kb,text]=await Promise.all([getJSON(URLS.items),getJSON(URLS.itemText).catch(()=>({}))]);
   const desc=new Map();
   for(const v of Object.values(text)){if(v&&v.localized_name&&v.description&&!desc.has(v.localized_name))desc.set(v.localized_name,String(v.description).replace(/<[^>]+>/g,"").trim())}
@@ -863,6 +871,8 @@ async function ensureItems(){
   items.forEach(i=>i.usedIn=used.get(i.name)||[]);
   state.itemMap=new Map(items.map(i=>[norm(i.name),i]));
   state.items=items;
+  const sel=$("#itemCategory");[...new Set(items.map(i=>i.category))].sort((a,b)=>itemCat(a).localeCompare(itemCat(b))).forEach(c=>sel.insertAdjacentHTML("beforeend",`<option value="${esc(c)}">${esc(itemCat(c))}</option>`));
+  attachSuggest($("#itemSearch"),()=>state.items.map(i=>({label:i.name,kind:itemCat(i.category)})),()=>renderItems(true));
 }
 function itemImg(name,cls="item-img"){
   const src=state.itemIcons&&state.itemIcons.get(name);
@@ -874,8 +884,6 @@ const itemBlurb=i=>{const t=i.desc||"";return t.length>140?t.slice(0,137).replac
 async function renderItems(reset){
   const box=$("#itemList");
   if(!state.items){box.innerHTML=`<div class="empty">Loading item library…</div>`;try{await ensureItems()}catch(e){box.innerHTML=`<div class="notice error">${esc(e.message)}</div>`;return}
-    const sel=$("#itemCategory");[...new Set(state.items.map(i=>i.category))].sort((a,b)=>itemCat(a).localeCompare(itemCat(b))).forEach(c=>sel.insertAdjacentHTML("beforeend",`<option value="${esc(c)}">${esc(itemCat(c))}</option>`));
-    attachSuggest($("#itemSearch"),()=>state.items.map(i=>({label:i.name,kind:itemCat(i.category)})),()=>renderItems(true));
   }
   if(reset)state.itemsVisible=48;
   const q=norm($("#itemSearch").value),cat=$("#itemCategory").value;
@@ -1006,8 +1014,12 @@ function setMapArea(area,fit=true){
   if(fit)map.fitBounds(M.bounds,{animate:false});
 }
 async function loadJSONOnce(key,url,timeout=20000){if(!(key in M.names))M.names[key]=getJSON(url,timeout).catch(e=>{delete M.names[key];throw e});return M.names[key]}
-async function loadMapCategory(cat){
-  if(M.rows[cat.id])return M.rows[cat.id];
+function loadMapCategory(cat){
+  if(M.rows[cat.id])return Promise.resolve(M.rows[cat.id]);
+  M.rowLoads=M.rowLoads||{};
+  return M.rowLoads[cat.id]||(M.rowLoads[cat.id]=fetchMapCategory(cat).finally(()=>{delete M.rowLoads[cat.id]}));
+}
+async function fetchMapCategory(cat){
   try{
     const [raw,names]=await Promise.all([loadJSONOnce("data:"+cat.file,URLS.mapData+cat.file),cat.names?loadJSONOnce("l10n:"+cat.names,URLS.mapNames+cat.names).catch(()=>({})):null]);
     if(cat.file==="bosses.json")await ensureTrustData().catch(()=>{});
@@ -1015,7 +1027,7 @@ async function loadMapCategory(cat){
       .filter(r=>Number.isFinite(+r.x)&&Number.isFinite(+r.y)&&(!cat.filter||cat.filter(r)));
     rows.forEach(r=>{r._area=mapOf(+r.x,+r.y);r._label=markerLabel(cat,r,names)});
     return M.rows[cat.id]=rows;
-  }catch(e){console.warn("Map category unavailable:",cat.id,e);M.rows[cat.id]=[];return []}
+  }catch(e){console.warn("Map category unavailable:",cat.id,e);return []}
 }
 function palNameForId(id){
   if(!id)return "";
@@ -1161,7 +1173,7 @@ function removeSpawnPal(id){M.selected=M.selected.filter(x=>x!==id);renderSpawnC
 function clearSpawns(){M.selected=[];renderSpawnChips();renderSpawnClouds()}
 function spawnStatus(html,raw=false){const el=$("#spawnStatus");if(raw)el.innerHTML=html;else el.textContent=html}
 function spawnColour(id){return SPAWN_COLOURS[M.selected.indexOf(id)%SPAWN_COLOURS.length]}
-function levelRange(locs){const lo=Math.min(...locs.map(l=>+l.min).filter(Number.isFinite)),hi=Math.max(...locs.map(l=>+l.max).filter(Number.isFinite));return Number.isFinite(lo)?(lo===hi?"Lv. "+lo:"Lv. "+lo+"–"+hi):""}
+function levelRange(locs){const lv=v=>v==null||v===""?NaN:+v,lo=Math.min(...locs.map(l=>lv(l.min)).filter(Number.isFinite)),hi=Math.max(...locs.map(l=>lv(l.max)).filter(Number.isFinite));return Number.isFinite(lo)?(lo===hi?"Lv. "+lo:"Lv. "+lo+"–"+hi):""}
 function timeSummary(s){
   if(M.spawnSource!=="paldeck")return "";
   const d=s.locs.filter(l=>l.t.includes("d")).length,n=s.locs.filter(l=>l.t.includes("n")).length,both=s.locs.filter(l=>l.t==="dn").length;
@@ -1183,6 +1195,7 @@ function renderSpawnChips(){
 // merged into one cloud per Pal, tinted, and laid over the map as a single image.
 function renderSpawnClouds(){
   if(!M.map)return;
+  const gen=M.cloudGen=(M.cloudGen||0)+1;
   if(M.clouds){M.map.removeLayer(M.clouds);M.clouds=null}
   if(M.cloudUrl){URL.revokeObjectURL(M.cloudUrl);M.cloudUrl=null}
   if(!M.selected.length)return;
@@ -1204,7 +1217,7 @@ function renderSpawnClouds(){
   }
   if(!drawn){renderSpawnChips();return}
   out.toBlob(b=>{
-    if(!b||!M.map)return;
+    if(!b||!M.map||gen!==M.cloudGen)return;
     if(M.clouds)M.map.removeLayer(M.clouds);
     if(M.cloudUrl)URL.revokeObjectURL(M.cloudUrl);
     M.cloudUrl=URL.createObjectURL(b);
