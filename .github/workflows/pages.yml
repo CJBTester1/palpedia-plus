@@ -28,8 +28,46 @@ jobs:
           mkdir -p _site
           cp index.html _site/index.html
           cp palpedia-plus.html README.md LICENSE THIRD_PARTY_NOTICES.md _site/ 2>/dev/null || true
-          # Map tiles, markers and spawn zones are loaded by the browser from GitHub at runtime.
+          # Map tiles and markers are loaded by the browser from GitHub at runtime.
           test -s _site/index.html
+
+      - name: Build day/night Paldeck spawn zones
+        # Non-fatal: if PalDB is unreachable the map falls back to PalDex spawner data (no day/night split).
+        continue-on-error: true
+        run: |
+          mkdir -p _site/runtime
+          curl --fail --location --retry 3 --retry-delay 5 -sS \
+            "https://paldb.cc/DataTable/UI/DT_PaldexDistributionData.json" -o /tmp/distribution.json
+          python3 - <<'PY'
+          import json, datetime
+          raw = json.load(open("/tmp/distribution.json"))
+          rows = raw[0]["Rows"] if isinstance(raw, list) else raw["Rows"]
+          def flat(block):
+              pts = []
+              for p in (block or {}).get("Locations") or (block or {}).get("locations") or []:
+                  x, y = p.get("X", p.get("x")), p.get("Y", p.get("y"))
+                  if isinstance(x, (int, float)) and isinstance(y, (int, float)):
+                      pts += [round(x), round(y)]
+              return pts
+          pals = {}
+          for pid, row in rows.items():
+              if pid.upper().startswith("BOSS_"):
+                  continue
+              day, night = row.get("dayTimeLocations") or {}, row.get("nightTimeLocations") or {}
+              d, n = flat(day), flat(night)
+              if not d and not n:
+                  continue
+              radius = max(float(day.get("Radius") or 0), float(night.get("Radius") or 0)) or 15000
+              pals[pid] = {"r": round(radius), "d": d, "n": "d" if n == d else n}
+          if len(pals) < 100:
+              raise SystemExit(f"Only {len(pals)} species parsed; refusing to publish")
+          out = {"source": "DT_PaldexDistributionData via paldb.cc",
+                 "built": datetime.date.today().isoformat(), "pals": pals}
+          json.dump(out, open("_site/runtime/paldeck_distribution.json", "w"), separators=(",", ":"))
+          changed = sum(1 for v in pals.values() if v["n"] != "d")
+          print(f"{len(pals)} species, {changed} with different day/night zones")
+          PY
+          ls -l _site/runtime/paldeck_distribution.json
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4

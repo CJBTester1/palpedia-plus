@@ -127,6 +127,7 @@ dialog::backdrop{background:rgba(0,0,0,.68)}
 .spawn-search{width:100%;min-width:0;min-height:46px;border:1px solid var(--line);border-radius:11px;background:#0d1829;color:var(--text);-webkit-text-fill-color:var(--text);caret-color:var(--accent);padding:0 12px;outline:none;appearance:none;-webkit-appearance:none}
 .spawn-search::placeholder{color:#71869f;opacity:1}.spawn-search:focus{outline:3px solid rgba(88,215,255,.35);outline-offset:2px}
 .spawn-controls .map-btn{min-height:46px;border-radius:11px}
+.spawn-time{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.spawn-time[hidden]{display:none}
 .spawn-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.spawn-chips:empty{display:none}
 .spawn-chip{display:inline-flex;align-items:center;gap:7px;min-height:32px;padding:0 4px 0 10px;border-radius:999px;background:var(--chip);border:1px solid #2a4263;font-size:13px}
 .spawn-chip i{width:12px;height:12px;border-radius:50%;flex:0 0 auto}.spawn-chip button{width:26px;height:26px;border:0;border-radius:50%;background:transparent;color:var(--muted);font-size:17px;line-height:1}
@@ -198,6 +199,7 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
           <button class="map-btn active" id="addSpawnBtn" type="button">Show</button>
           <button class="map-btn" id="clearSpawnBtn" type="button">Clear</button>
         </div>
+        <div class="spawn-time" id="spawnTime" role="group" aria-label="Time of day" hidden><button class="map-btn" type="button" data-spawn-time="day">☀ Day</button><button class="map-btn" type="button" data-spawn-time="night">☾ Night</button><button class="map-btn active" type="button" data-spawn-time="both">Both</button></div>
         <div class="spawn-chips" id="spawnChips"></div>
         <div id="spawnStatus" class="small">Choose a Pal to highlight its wild spawn zones. Up to six Pals can be shown at once.</div>
       </div>
@@ -205,7 +207,7 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
         <div class="map-toolbar"><button class="map-btn active" id="mainMapBtn" type="button">Main Map</button><button class="map-btn" id="treeMapBtn" type="button">World Tree</button><button class="map-btn" id="mapFilterBtn" type="button">Filters</button><button class="map-btn" id="mapFullscreenBtn" type="button">Full screen</button><button class="map-btn map-close-full" id="mapFullscreenClose" type="button" aria-label="Close full screen">×</button></div>
         <div class="map-wrap"><div id="leafletMap" aria-label="Interactive Palworld map"></div><div class="map-filter-panel" id="mapFilters" hidden></div><div class="map-note" id="mapNote">Open the Map tab to load the map.</div><div class="map-coords" id="mapCoords">X — · Y —</div></div>
       </div>
-      <p class="small" style="margin-top:8px">Map tiles, marker coordinates and UI icons are loaded at runtime from the GPL-3.0 palworld-save-pal project; wild spawn zones from the MIT-licensed PalDex extraction; map engine: Leaflet. Palworld-derived imagery and data remain property of Pocketpair. Palpedia+ does not bundle these game assets in this repository.</p>
+      <p class="small" style="margin-top:8px">Map tiles, marker coordinates and UI icons are loaded at runtime from the GPL-3.0 palworld-save-pal project; day/night spawn zones from the in-game Paldeck table via PalDB, level ranges from the MIT-licensed PalDex extraction; map engine: Leaflet. Palworld-derived imagery and data remain property of Pocketpair. Palpedia+ does not bundle these game assets in this repository.</p>
     </section>
 
     <section class="section" id="breeding">
@@ -297,6 +299,7 @@ const URLS = {
   mapTiles: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/psp-ui/static/maps/",
   mapIcons: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/psp-ui/src/lib/assets/img/",
   palSpawns: "https://raw.githubusercontent.com/catrenelle/PalDex/master/data/pal_spawn_locations_static.json",
+  palDistribution: "https://cjbtester1.github.io/palpedia-plus/runtime/paldeck_distribution.json",
   leafletJs: ["https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js","https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"],
   leafletCss: ["https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css","https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"]
 };
@@ -775,7 +778,7 @@ const MAP_CATS=[
 ];
 const SPAWN_COLOURS=["#ff8a2b","#a46bff","#2fd6ff","#7cff5a","#ff4fa0","#ffe14a"];
 const SPAWN_MAX=6,CLOUD_RES=2048;
-const M={L:null,map:null,ready:null,area:"MainMap",tiles:null,markers:null,clouds:null,hidden:new Set(MAP_CATS.filter(c=>!c.show).map(c=>c.id)),rows:{},names:{},icons:{},spawns:null,spawnsLoading:null,spawnById:new Map(),spawnByName:new Map(),selected:[],cloudUrl:null};
+const M={L:null,map:null,ready:null,area:"MainMap",tiles:null,markers:null,clouds:null,hidden:new Set(MAP_CATS.filter(c=>!c.show).map(c=>c.id)),rows:{},names:{},icons:{},spawns:null,spawnsLoading:null,spawnById:new Map(),spawnByName:new Map(),selected:[],cloudUrl:null,time:"both",spawnSource:"",palDex:null};
 
 function mapNote(text,kind=""){const n=$("#mapNote");if(!n)return;n.hidden=!text;n.textContent=text||"";n.className="map-note"+(kind?" "+kind:"")}
 function mapOf(x,y){for(const [k,a] of Object.entries(MAP_AREAS))if(x>=a.minX&&x<=a.maxX&&y>=a.minY&&y<=a.maxY)return k;return null}
@@ -913,18 +916,44 @@ function renderMapFilters(){
 }
 
 // ---------- Wild spawn zones ----------
-function ensureSpawns(){
-  if(M.spawns)return Promise.resolve(M.spawns);
-  if(!M.spawnsLoading)M.spawnsLoading=getJSON(URLS.palSpawns,45000).then(raw=>{
+// Primary source: the game's own Paldeck table (DT_PaldexDistributionData), compacted at deploy time into
+// runtime/paldeck_distribution.json with separate day and night points. Fallback: PalDex spawner data
+// (no day/night split). PalDex is also used, lazily, for level ranges when a cloud is tapped.
+function distributionUrl(){return /\.github\.io$/i.test(location.hostname)?new URL("runtime/paldeck_distribution.json",location.href).href:URLS.palDistribution}
+function spawnLoc(x,y,r,t,min,max){return {x,y,r,t,min,max,area:mapOf(x,y)}}
+async function spawnNamesById(){
+  await ensureTrustData().catch(()=>{});
+  const out=new Map();for(const [n,v] of state.trustByName||[])out.set(v.id.toLowerCase(),state.palMap.get(n)?.name||titleCase(n));return out;
+}
+async function loadDistribution(){
+  const raw=await getJSON(distributionUrl(),30000),names=await spawnNamesById(),out=new Map();
+  for(const [id,v] of Object.entries(raw?.pals||{})){
+    const pts=new Map(),add=(arr,t)=>{for(let i=0;i+1<(arr||[]).length;i+=2){const k=arr[i]+","+arr[i+1];pts.set(k,(pts.get(k)||"")+t)}};
+    add(v.d,"d");add(v.n==="d"?v.d:v.n,"n");
+    const locs=[...pts].map(([k,t])=>{const [x,y]=k.split(",").map(Number);return spawnLoc(x,y,+v.r||15000,t)}).filter(l=>l.area);
+    if(locs.length)out.set(id,{id,name:names.get(id.toLowerCase())||id.replace(/_/g," "),locs});
+  }
+  if(out.size<50)throw new Error("Paldeck distribution data looks incomplete.");
+  M.spawnSource="paldeck";return out;
+}
+async function loadPalDex(){
+  if(!M.palDex)M.palDex=getJSON(URLS.palSpawns,45000).then(raw=>{
     const out=new Map();
     for(const [id,v] of Object.entries(raw||{})){
-      const locs=(v?.locations||[]).filter(l=>Number.isFinite(+l.x)&&Number.isFinite(+l.y)).map(l=>({x:+l.x,y:+l.y,r:+l.radius||15000,min:l.levelMin,max:l.levelMax,area:mapOf(+l.x,+l.y)})).filter(l=>l.area);
-      if(!locs.length||!v.name)continue;
-      out.set(id,{id,name:String(v.name),locs});
+      const locs=(v?.locations||[]).filter(l=>Number.isFinite(+l.x)&&Number.isFinite(+l.y)).map(l=>spawnLoc(+l.x,+l.y,+l.radius||15000,"dn",l.levelMin,l.levelMax)).filter(l=>l.area);
+      if(locs.length&&v.name)out.set(id,{id,name:String(v.name),locs});
     }
     if(!out.size)throw new Error("Spawn dataset is empty.");
+    return out;
+  }).catch(e=>{M.palDex=null;throw e});
+  return M.palDex;
+}
+function ensureSpawns(){
+  if(M.spawns)return Promise.resolve(M.spawns);
+  if(!M.spawnsLoading)M.spawnsLoading=loadDistribution().catch(e=>{console.warn("Paldeck distribution unavailable, using PalDex spawners:",e);M.spawnSource="paldex";return loadPalDex()}).then(out=>{
     M.spawns=out;M.spawnById=out;M.spawnByName=new Map([...out.values()].map(s=>[norm(s.name),s]));
     $("#spawnPalNames").innerHTML=[...out.values()].map(s=>s.name).sort((a,b)=>a.localeCompare(b)).map(n=>`<option value="${esc(n)}"></option>`).join("");
+    $("#spawnTime").hidden=M.spawnSource!=="paldeck";
     return out;
   }).catch(e=>{M.spawnsLoading=null;throw e});
   return M.spawnsLoading;
@@ -937,6 +966,8 @@ async function findSpawnEntry(name){
   if(!s){const partial=[...M.spawnByName.entries()].filter(([n])=>n.includes(k));if(partial.length===1)s=partial[0][1]}
   return s||null;
 }
+function timeVisible(l){return M.time==="both"||l.t.includes(M.time==="day"?"d":"n")}
+function shownLocs(s,area=M.area){return s.locs.filter(l=>l.area===area&&timeVisible(l))}
 async function addSpawnPal(name,{replace=false,focus=true}={}){
   name=String(name||"").trim();
   if(!name){spawnStatus("Type a Pal name first.");return}
@@ -950,28 +981,42 @@ async function addSpawnPal(name,{replace=false,focus=true}={}){
     M.selected.push(s.id);
   }
   $("#spawnPalSearch").value="";
-  const counts={MainMap:0,Tree:0};s.locs.forEach(l=>counts[l.area]++);
+  // A night-only Pal added while viewing Day switches the view to Night (and vice versa).
+  if(M.time!=="both"&&!s.locs.some(timeVisible))setSpawnTime(M.time==="day"?"night":"day",false);
+  const counts={MainMap:0,Tree:0};s.locs.filter(timeVisible).forEach(l=>counts[l.area]++);
   if(focus&&!counts[M.area])setMapArea(counts.MainMap?"MainMap":"Tree",false);
   renderSpawnChips();renderSpawnClouds();
   if(focus){
-    const pts=s.locs.filter(l=>l.area===M.area).map(l=>worldToLatLng(l.x,l.y,M.area));
+    const pts=shownLocs(s).map(l=>worldToLatLng(l.x,l.y,M.area));
     if(pts.length)M.map.fitBounds(M.L.latLngBounds(pts).pad(.25),{maxZoom:3,animate:true});
   }
+}
+function setSpawnTime(t,render=true){
+  M.time=t;
+  document.querySelectorAll("[data-spawn-time]").forEach(b=>b.classList.toggle("active",b.dataset.spawnTime===t));
+  if(render){renderSpawnChips();renderSpawnClouds()}
 }
 function removeSpawnPal(id){M.selected=M.selected.filter(x=>x!==id);renderSpawnChips();renderSpawnClouds()}
 function clearSpawns(){M.selected=[];renderSpawnChips();renderSpawnClouds()}
 function spawnStatus(html,raw=false){const el=$("#spawnStatus");if(raw)el.innerHTML=html;else el.textContent=html}
 function spawnColour(id){return SPAWN_COLOURS[M.selected.indexOf(id)%SPAWN_COLOURS.length]}
 function levelRange(locs){const lo=Math.min(...locs.map(l=>+l.min).filter(Number.isFinite)),hi=Math.max(...locs.map(l=>+l.max).filter(Number.isFinite));return Number.isFinite(lo)?(lo===hi?"Lv. "+lo:"Lv. "+lo+"–"+hi):""}
+function timeSummary(s){
+  if(M.spawnSource!=="paldeck")return "";
+  const d=s.locs.filter(l=>l.t.includes("d")).length,n=s.locs.filter(l=>l.t.includes("n")).length,both=s.locs.filter(l=>l.t==="dn").length;
+  if(!d)return "night only";if(!n)return "day only";
+  return both===s.locs.length?"same zones day & night":"zones change between day and night";
+}
 function renderSpawnChips(){
   const box=$("#spawnChips");
   box.innerHTML=M.selected.map(id=>{const s=M.spawnById.get(id);return `<span class="spawn-chip"><i style="background:${spawnColour(id)}"></i>${esc(s.name)}<button type="button" data-remove-spawn="${esc(id)}" aria-label="Remove ${esc(s.name)}">×</button></span>`}).join("");
   box.querySelectorAll("[data-remove-spawn]").forEach(b=>b.addEventListener("click",()=>removeSpawnPal(b.dataset.removeSpawn)));
   if(!M.selected.length){spawnStatus("Choose a Pal to highlight its wild spawn zones. Up to six Pals can be shown at once.");return}
+  const when=M.spawnSource==="paldeck"?{day:"daytime",night:"night-time",both:"day + night"}[M.time]:"";
   spawnStatus(M.selected.map(id=>{
-    const s=M.spawnById.get(id),here=s.locs.filter(l=>l.area===M.area),other=s.locs.length-here.length,p=state.palMap.get(norm(s.name)),dn=state.locationDetails[p?.name||s.name]?.day_night;
-    return `<b style="color:${spawnColour(id)}">${esc(s.name)}</b> · ${here.length?`${here.length.toLocaleString()} spawn points on ${esc(MAP_AREAS[M.area].name)} · ${esc(levelRange(here))}`:`none on ${esc(MAP_AREAS[M.area].name)}`}${other?` · ${other.toLocaleString()} on ${esc(MAP_AREAS[M.area==="MainMap"?"Tree":"MainMap"].name)}`:""}${dn?` · ${esc(dn==="both"?"day & night":dn+" only")}`:""}`;
-  }).join("<br>")+`<br><span class="small">Tap inside a cloud for the local level range.</span>`,true);
+    const s=M.spawnById.get(id),here=shownLocs(s),otherArea=M.area==="MainMap"?"Tree":"MainMap",other=shownLocs(s,otherArea).length,ts=timeSummary(s);
+    return `<b style="color:${spawnColour(id)}">${esc(s.name)}</b> · ${here.length?`${here.length.toLocaleString()} ${esc(when)} spawn points on ${esc(MAP_AREAS[M.area].name)}${M.spawnSource==="paldex"&&levelRange(here)?" · "+esc(levelRange(here)):""}`:`no ${esc(when)} spawns on ${esc(MAP_AREAS[M.area].name)}`}${other?` · ${other.toLocaleString()} on ${esc(MAP_AREAS[otherArea].name)}`:""}${ts?` · ${esc(ts)}`:""}`;
+  }).join("<br>")+`<br><span class="small">${M.spawnSource==="paldeck"?"Zones from the in-game Paldeck. ":"Day/night data unavailable; showing all spawners. "}Tap inside a cloud for the local level range.</span>`,true);
 }
 // Each Pal's spawn points are painted as soft radial blobs on an offscreen canvas,
 // merged into one cloud per Pal, tinted, and laid over the map as a single image.
@@ -987,8 +1032,7 @@ function renderSpawnClouds(){
   for(const id of M.selected){
     const s=M.spawnById.get(id);if(!s)continue;
     mctx.globalCompositeOperation="source-over";mctx.clearRect(0,0,CLOUD_RES,CLOUD_RES);
-    for(const l of s.locs){
-      if(l.area!==M.area)continue;
+    for(const l of shownLocs(s)){
       const p=worldToPixel(l.x,l.y,M.area),cx=p.x*scale,cy=p.y*scale,r=Math.max(6,l.r/cmPerPx(M.area)*scale*1.9);
       const g=mctx.createRadialGradient(cx,cy,0,cx,cy,r);
       g.addColorStop(0,"rgba(0,0,0,.85)");g.addColorStop(.45,"rgba(0,0,0,.55)");g.addColorStop(1,"rgba(0,0,0,0)");
@@ -1008,13 +1052,16 @@ function renderSpawnClouds(){
   renderSpawnChips();
 }
 function mapClickInfo(ll){
-  const w=latLngToWorld(ll,M.area),rows=[];
-  for(const id of M.selected){
-    const s=M.spawnById.get(id);if(!s)continue;
-    const near=s.locs.filter(l=>l.area===M.area&&Math.hypot(l.x-w.x,l.y-w.y)<=l.r*1.9);
-    if(near.length)rows.push(`<div><span style="color:${spawnColour(id)}">●</span> ${esc(s.name)} · ${esc(levelRange(near))}</div>`);
-  }
-  M.L.popup().setLatLng(ll).setContent(`${rows.length?`<b>Wild spawns here</b>${rows.join("")}`:""}<div class="coord">${esc(gameText(w.x,w.y))}</div>`).openOn(M.map);
+  const w=latLngToWorld(ll,M.area),near=(locs)=>locs.filter(l=>l.area===M.area&&Math.hypot(l.x-w.x,l.y-w.y)<=l.r*1.9);
+  const hits=M.selected.map(id=>M.spawnById.get(id)).filter(Boolean).map(s=>({s,near:near(shownLocs(s))})).filter(h=>h.near.length);
+  const body=levels=>`${hits.length?`<b>Wild spawns here</b>${hits.map(({s,near:n})=>{
+    const lv=levels?.get(s.id)||levelRange(n),t=M.spawnSource==="paldeck"?(n.some(l=>l.t.includes("d"))&&n.some(l=>l.t.includes("n"))?"day & night":n.some(l=>l.t.includes("d"))?"day":"night"):"";
+    return `<div><span style="color:${spawnColour(s.id)}">●</span> ${esc(s.name)}${lv?" · "+esc(lv):""}${t?" · "+esc(t):""}</div>`}).join("")}`:""}<div class="coord">${esc(gameText(w.x,w.y))}</div>`;
+  const pop=M.L.popup().setLatLng(ll).setContent(body()).openOn(M.map);
+  if(hits.length&&M.spawnSource==="paldeck")loadPalDex().then(pd=>{
+    const levels=new Map(hits.map(({s})=>{const e=pd.get(s.id)||[...pd.values()].find(v=>norm(v.name)===norm(s.name));return [s.id,e?levelRange(near(e.locs)):""]}));
+    if(pop.isOpen())pop.setContent(body(levels));
+  }).catch(()=>{});
 }
 function initMapUI(){
   $("#mainMapBtn").addEventListener("click",()=>{setMapArea("MainMap");renderSpawnChips()});
@@ -1029,6 +1076,7 @@ function initMapUI(){
   $("#addSpawnBtn").addEventListener("click",add);
   $("#spawnPalSearch").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();add()}});
   $("#clearSpawnBtn").addEventListener("click",clearSpawns);
+  document.querySelectorAll("[data-spawn-time]").forEach(b=>b.addEventListener("click",()=>setSpawnTime(b.dataset.spawnTime)));
   $("#drawer").addEventListener("click",e=>{const b=e.target.closest(".pal-habitat-btn");if(!b)return;$("#palDialog").close();switchTab("map");addSpawnPal(b.dataset.pal,{replace:true}).catch(err=>spawnStatus("Could not load spawn data: "+err.message))});
 }
 

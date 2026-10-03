@@ -19,9 +19,9 @@ Palpedia+ references or loads maintained third-party resources at runtime, inclu
   https://github.com/beliarance/palworld-kb
 - oMaN-Rod/palworld-save-pal — extracted Friendship/Trust parameters and map resources. The upstream project declares GPL-3.0.
   https://github.com/oMaN-Rod/palworld-save-pal
-- PalDB — version reference and Pal icon images.
+- PalDB — version reference, Pal icon images, and the Paldeck distribution table (`DT_PaldexDistributionData`) used for day/night spawn zones.
   https://paldb.cc/
-- catrenelle/PalDex — extracted wild Pal spawn locations used for map spawn-zone clouds. The upstream project declares MIT.
+- catrenelle/PalDex — extracted wild Pal spawn locations used for spawn level ranges and as the spawn-zone fallback. The upstream project declares MIT.
   https://github.com/catrenelle/PalDex
 - Leaflet — interactive map engine, loaded from cdnjs/unpkg. BSD-2-Clause.
   https://leafletjs.com/
