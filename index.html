@@ -25,6 +25,7 @@ a{color:var(--accent)}
 h1{font-size:clamp(24px,7vw,38px);line-height:1.05;margin:0}
 .sub{color:var(--muted);margin:5px 0 0}
 .status{margin-top:12px;padding:10px 12px;border:1px solid var(--line);background:rgba(16,27,46,.84);border-radius:12px;display:flex;gap:8px;align-items:flex-start}
+.status[hidden]{display:none}
 .dot{width:9px;height:9px;margin-top:6px;border-radius:50%;background:var(--warn);flex:0 0 auto}
 .dot.ok{background:var(--accent2)} .dot.bad{background:var(--danger)}
 nav{display:flex;gap:8px;overflow:auto;padding:8px 0 12px;scrollbar-width:none;position:sticky;top:0;z-index:20;background:linear-gradient(var(--bg) 65%,rgba(8,17,31,.92))}
@@ -125,6 +126,11 @@ dialog::backdrop{background:rgba(0,0,0,.68)}
 .spawn-cloud{pointer-events:none}
 .spawn-controls{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;margin-top:12px}
 .spawn-search{width:100%;min-width:0;min-height:46px;border:1px solid var(--line);border-radius:11px;background:#0d1829;color:var(--text);-webkit-text-fill-color:var(--text);caret-color:var(--accent);padding:0 12px;outline:none;appearance:none;-webkit-appearance:none}
+.suggest{position:absolute;z-index:3000;margin:0;padding:4px;list-style:none;max-height:min(320px,50vh);overflow:auto;background:#0d1829;border:1px solid var(--line);border-radius:11px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+.suggest li{display:flex;justify-content:space-between;gap:10px;align-items:center;min-height:40px;padding:0 10px;border-radius:8px;cursor:pointer;color:var(--text)}
+.suggest li.on,.suggest li:hover{background:rgba(88,215,255,.16)}
+.suggest .k{font-size:11px;color:var(--muted);flex:0 0 auto}
+.suggest mark{background:none;color:var(--accent);font-weight:800}
 .spawn-search::placeholder{color:#71869f;opacity:1}.spawn-search:focus{outline:3px solid rgba(88,215,255,.35);outline-offset:2px}
 .spawn-controls .map-btn{min-height:46px;border-radius:11px}
 .spawn-time{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.spawn-time[hidden]{display:none}
@@ -194,8 +200,8 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
         <p class="small">Main Map and World Tree. Drag to pan, pinch or use ± to zoom, tap an icon for details, tap the map for coordinates. Add Pals to see where they spawn: each Pal gets its own coloured cloud.</p>
         <label class="small" for="spawnPalSearch" style="display:block;margin-top:10px;font-weight:750">Pal spawn zones</label>
         <div class="spawn-controls">
-          <input class="spawn-search" id="spawnPalSearch" type="search" list="spawnPalNames" placeholder="Search a Pal…" autocomplete="off" spellcheck="false" enterkeyhint="go">
-          <datalist id="spawnPalNames"></datalist>
+          <input class="spawn-search" id="spawnPalSearch" type="search" placeholder="Search a Pal…" autocomplete="off" spellcheck="false" enterkeyhint="go">
+          
           <button class="map-btn active" id="addSpawnBtn" type="button">Show</button>
           <button class="map-btn" id="clearSpawnBtn" type="button">Clear</button>
         </div>
@@ -310,7 +316,7 @@ const norm = s => String(s ?? "").trim().toLowerCase();
 const fmt = n => Number.isFinite(Number(n)) ? Number(n).toLocaleString() : "—";
 const unique = a => [...new Set(a.filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
 const status = (title,text,kind="") => {
-  $("#statusTitle").textContent=title; $("#statusText").textContent=text;
+  $("#status").hidden=false; $("#statusTitle").textContent=title; $("#statusText").textContent=text;
   $("#statusDot").className="dot"+(kind?(" "+kind):"");
 };
 async function getJSON(url,timeout=12000){
@@ -332,6 +338,60 @@ function imageMarkup(name,size=""){
   if(!src) return `<div class="img-fallback">${initials}</div>`;
   return `<img class="pal-img" loading="lazy" src="${esc(src)}" alt="${esc(name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="img-fallback" style="display:none">${initials}</div>`;
 }
+// ---------- Autocomplete ----------
+// Ranking: prefix matches first, then word-start matches, then substring matches; alphabetical within each group.
+function attachSuggest(input,getItems,onPick){
+  const ul=document.createElement("ul");ul.className="suggest";ul.id=input.id+"Suggest";ul.setAttribute("role","listbox");ul.hidden=true;document.body.appendChild(ul);
+  input.setAttribute("role","combobox");input.setAttribute("aria-autocomplete","list");input.setAttribute("aria-controls",ul.id);input.setAttribute("aria-expanded","false");
+  let rows=[],cur=-1;
+  const hide=()=>{ul.hidden=true;cur=-1;input.setAttribute("aria-expanded","false")};
+  const mark=i=>{[...ul.children].forEach((li,n)=>li.classList.toggle("on",n===i));cur=i;ul.children[i]?.scrollIntoView({block:"nearest"})};
+  const place=()=>{const r=input.getBoundingClientRect();ul.style.left=r.left+scrollX+"px";ul.style.top=r.bottom+scrollY+4+"px";ul.style.width=r.width+"px"};
+  const pick=i=>{const r=rows[i];if(!r)return;hide();input.value=r.label;onPick(r)};
+  const show=()=>{
+    const q=norm(input.value);
+    if(!q){hide();return}
+    const seen=new Set(),hits=[];
+    for(const it of getItems()){
+      const l=norm(it.label),key=l+"|"+it.kind;
+      if(seen.has(key))continue;
+      const at=l.indexOf(q);if(at<0)continue;
+      seen.add(key);
+      hits.push({...it,rank:at===0?0:/[\s\-(]/.test(l[at-1])?1:2,at,len:l.length});
+    }
+    hits.sort((a,b)=>a.rank-b.rank||a.label.localeCompare(b.label)||a.kind.localeCompare(b.kind));
+    rows=hits.slice(0,8);
+    if(!rows.length){hide();return}
+    ul.innerHTML=rows.map((r,i)=>`<li role="option" data-i="${i}"><span>${esc(r.label.slice(0,r.at))}<mark>${esc(r.label.slice(r.at,r.at+q.length))}</mark>${esc(r.label.slice(r.at+q.length))}</span><span class="k">${esc(r.kind)}</span></li>`).join("");
+    place();ul.hidden=false;cur=-1;input.setAttribute("aria-expanded","true");
+  };
+  input.addEventListener("input",show);
+  input.addEventListener("focus",show);
+  input.addEventListener("blur",()=>setTimeout(hide,150));
+  input.addEventListener("keydown",e=>{
+    if(ul.hidden)return;
+    if(e.key==="ArrowDown"){e.preventDefault();mark((cur+1)%rows.length)}
+    else if(e.key==="ArrowUp"){e.preventDefault();mark((cur-1+rows.length)%rows.length)}
+    else if(e.key==="Enter"&&cur>=0){e.preventDefault();e.stopImmediatePropagation();pick(cur)}
+    else if(e.key==="Escape")hide();
+  },true);
+  ul.addEventListener("mousedown",e=>{const li=e.target.closest("li");if(li){e.preventDefault();pick(+li.dataset.i)}});
+  addEventListener("resize",()=>{if(!ul.hidden)place()});
+}
+function mainSuggestItems(){
+  if(state._sugg)return state._sugg;
+  const out=[],pal=new Set();
+  for(const p of state.pals){
+    out.push({label:p.name,kind:"Pal"});
+    if(p.partner_skill)out.push({label:p.partner_skill,kind:"Partner Skill"});
+    (p.drops||[]).forEach(d=>out.push({label:d,kind:"Item"}));
+    Object.keys(p.work||{}).forEach(w=>out.push({label:w.replaceAll("_"," "),kind:"Work"}));
+    (p.elements||[]).forEach(el=>out.push({label:el,kind:"Element"}));
+  }
+  (state.passives?.passives||[]).forEach(x=>out.push({label:x.name,kind:"Passive"}));
+  if(state.passives)state._sugg=out;
+  return out;
+}
 function palSearchBlob(p){
   return [p.name,p.number,...(p.elements||[]),Object.keys(p.work||{}),p.partner_skill,p.partner_effect,...(p.drops||[]),...(p.regions||[]),...(p.alpha||[])].join(" ").toLowerCase();
 }
@@ -346,9 +406,11 @@ async function loadCore(){
     state.palMap=new Map(state.pals.map(p=>[norm(p.name),p]));
     populateFilters();
     populateNames();
+    attachSuggest($("#search"),mainSuggestItems,()=>renderPals());
+    ensurePassives().catch(()=>{});
     renderPals();
     $("#dataStamp").textContent=`Core dataset ${idx.updated||"1.0"}`;
-    status("Current Palpedia data loaded",`${state.pals.length} data records available. Detailed skills and breeding load only when needed to keep mobile startup lighter.`,"ok");
+    $("#status").hidden=true;
   }catch(e){
     console.error(e);
     status("Could not load live Pal data","Check your internet connection, then reload this HTML file. The guide intentionally does not fall back to stale embedded Pal tables.","bad");
@@ -381,7 +443,7 @@ function renderPals(reset=true){
   if(reset) state.visible=48;
   const q=norm($("#search").value), el=$("#elementFilter").value, mount=$("#mountFilter").value, work=$("#workFilter").value;
   let arr=state.pals.filter(p=>{
-    if(q&&!p._search.includes(q))return false;
+    if(q&&!p._search.includes(q)&&!p._search.includes(q.replaceAll(" ","_")))return false;
     if(el&&!(p.elements||[]).includes(el))return false;
     const pm=p.mount||"none";
     if(mount&&pm!==mount)return false;
@@ -952,7 +1014,7 @@ function ensureSpawns(){
   if(M.spawns)return Promise.resolve(M.spawns);
   if(!M.spawnsLoading)M.spawnsLoading=loadDistribution().catch(e=>{console.warn("Paldeck distribution unavailable, using PalDex spawners:",e);M.spawnSource="paldex";return loadPalDex()}).then(out=>{
     M.spawns=out;M.spawnById=out;M.spawnByName=new Map([...out.values()].map(s=>[norm(s.name),s]));
-    $("#spawnPalNames").innerHTML=[...out.values()].map(s=>s.name).sort((a,b)=>a.localeCompare(b)).map(n=>`<option value="${esc(n)}"></option>`).join("");
+    M.suggestNames=[...out.values()].map(s=>({label:s.name,kind:"Pal"}));
     $("#spawnTime").hidden=M.spawnSource!=="paldeck";
     return out;
   }).catch(e=>{M.spawnsLoading=null;throw e});
@@ -1076,6 +1138,8 @@ function initMapUI(){
   $("#addSpawnBtn").addEventListener("click",add);
   $("#spawnPalSearch").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();add()}});
   $("#clearSpawnBtn").addEventListener("click",clearSpawns);
+  attachSuggest($("#spawnPalSearch"),()=>M.suggestNames||[],add);
+  $("#spawnPalSearch").addEventListener("focus",()=>ensureSpawns().catch(()=>{}));
   document.querySelectorAll("[data-spawn-time]").forEach(b=>b.addEventListener("click",()=>setSpawnTime(b.dataset.spawnTime)));
   $("#drawer").addEventListener("click",e=>{const b=e.target.closest(".pal-habitat-btn");if(!b)return;$("#palDialog").close();switchTab("map");addSpawnPal(b.dataset.pal,{replace:true}).catch(err=>spawnStatus("Could not load spawn data: "+err.message))});
 }
