@@ -104,32 +104,37 @@ dialog::backdrop{background:rgba(0,0,0,.68)}
 .work-edit{display:grid;grid-template-columns:minmax(0,1fr) 86px;gap:8px;align-items:center}
 @media(min-width:640px){.build-grid{grid-template-columns:repeat(4,1fr)}.mod-grid{grid-template-columns:repeat(4,1fr)}}
 
-.map-shell{position:relative;border:1px solid var(--line);border-radius:15px;overflow:hidden;background:#050b13;box-shadow:var(--shadow)}
+.map-shell{position:relative;border:1px solid var(--line);border-radius:15px;overflow:hidden;background:#0a1a24;box-shadow:var(--shadow)}
 .map-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px;background:#0d1829;border-bottom:1px solid var(--line)}
 .map-btn{min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);padding:0 12px;font-weight:700}.map-btn.active{background:var(--accent);color:#06101c;border-color:var(--accent)}
-.map-viewport{height:min(70vh,720px);min-height:430px;position:relative;overflow:hidden;touch-action:none;cursor:grab;background:#02060b}.map-viewport.dragging{cursor:grabbing}
-.map-stage{position:absolute;left:0;top:0;width:8192px;height:8192px;transform-origin:0 0;will-change:transform}.map-tile{position:absolute;width:512px;height:512px;display:block;user-select:none;pointer-events:none}
-.map-marker{position:absolute;width:30px;height:30px;transform:translate(-50%,-50%);border:0;padding:0;background:transparent;z-index:4}.map-marker img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 1px 2px #000) drop-shadow(0 0 2px #000)}
-.fallback-pin{width:18px;height:18px;border-radius:50%;background:var(--accent);border:2px solid white;box-shadow:0 1px 4px #000}
-.map-pop{position:absolute;z-index:8;min-width:190px;max-width:280px;background:rgba(8,17,31,.96);border:1px solid #456487;border-radius:11px;padding:9px 11px;box-shadow:var(--shadow);pointer-events:none}.map-pop b{display:block}.map-pop .coord{font-size:12px}
-.map-filter-panel{position:absolute;z-index:10;top:10px;right:10px;width:min(310px,calc(100% - 20px));max-height:calc(100% - 20px);overflow:auto;background:rgba(8,17,31,.97);border:1px solid var(--line);border-radius:13px;padding:11px;box-shadow:var(--shadow)}
+.map-wrap{position:relative;height:min(70vh,720px);min-height:420px}
+#leafletMap{position:absolute;inset:0;background:#0a1a24;font:inherit}
+.map-filter-panel{position:absolute;z-index:1001;top:10px;right:10px;width:min(310px,calc(100% - 20px));max-height:calc(100% - 20px);overflow:auto;background:rgba(8,17,31,.97);border:1px solid var(--line);border-radius:13px;padding:11px;box-shadow:var(--shadow)}
+.map-filter-panel[hidden],.map-note[hidden]{display:none}
 .map-filter-row{display:flex;align-items:center;gap:9px;padding:7px 4px;border-bottom:1px solid rgba(38,58,87,.6)}.map-filter-row:last-child{border-bottom:0}.map-filter-row img{width:25px;height:25px;object-fit:contain}.map-filter-row label{flex:1}.map-count{color:var(--muted);font-size:11px}
-.map-zoom{position:absolute;z-index:9;left:10px;bottom:10px;display:grid;gap:6px}.map-zoom button{width:42px;height:42px;border-radius:10px;border:1px solid var(--line);background:rgba(8,17,31,.94);color:var(--text);font-size:22px}
-.map-coords{position:absolute;z-index:9;right:10px;bottom:10px;background:rgba(8,17,31,.88);border:1px solid var(--line);border-radius:9px;padding:5px 8px;font-size:11px;color:var(--muted)}
-.map-loading[hidden]{display:none}.map-loading{position:absolute;z-index:7;inset:0;display:grid;place-items:center;background:#050b13;color:var(--muted)}.map-fullscreen{position:fixed!important;inset:0!important;z-index:1000!important;border-radius:0!important;border:0!important}.map-fullscreen .map-viewport{height:calc(100dvh - 61px);min-height:0}
+.map-note{position:absolute;z-index:1000;left:10px;top:10px;max-width:calc(100% - 20px);background:rgba(8,17,31,.92);border:1px solid var(--line);border-radius:9px;padding:6px 10px;font-size:12px;color:var(--muted);pointer-events:none}.map-note.bad{color:#ffacbd;border-color:#632637}
+.map-coords{position:absolute;z-index:1000;right:10px;bottom:10px;background:rgba(8,17,31,.88);border:1px solid var(--line);border-radius:9px;padding:5px 8px;font-size:11px;color:var(--muted);pointer-events:none}
+.map-fullscreen{position:fixed!important;inset:0!important;z-index:1000!important;border-radius:0!important;border:0!important;display:flex;flex-direction:column}.map-fullscreen .map-wrap{flex:1;height:auto;min-height:0}
 .map-close-full{display:none}.map-fullscreen .map-close-full{display:inline-flex;align-items:center;justify-content:center;width:42px;padding:0;font-size:23px;margin-left:auto}
-.habitat-controls{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:14px}
-.habitat-field{display:grid;gap:6px;min-width:0}.habitat-label{font-size:12px;font-weight:750;color:var(--muted)}
-.habitat-search{width:100%;min-width:0;min-height:46px;border:1px solid var(--line);border-radius:11px;background:#0d1829!important;color:var(--text)!important;-webkit-text-fill-color:var(--text);caret-color:var(--accent);padding:0 12px;outline:none;appearance:none;-webkit-appearance:none}
-.habitat-search::placeholder{color:#71869f;opacity:1}.habitat-search:focus{outline:3px solid rgba(88,215,255,.35);outline-offset:2px;border-color:#3d688d;background:#0d1829!important}
-.habitat-search:-webkit-autofill,.habitat-search:-webkit-autofill:hover,.habitat-search:-webkit-autofill:focus{-webkit-text-fill-color:var(--text);box-shadow:0 0 0 1000px #0d1829 inset;caret-color:var(--accent)}
-.habitat-time{display:flex;gap:8px;flex-wrap:wrap}.habitat-check{display:flex;align-items:center;gap:8px;min-height:42px;padding:0 12px;border:1px solid var(--line);border-radius:11px;background:#0d1829;color:var(--text);font-weight:650}
-.habitat-check input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
-.habitat-actions{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:stretch}
-.habitat-actions .loadmore,.habitat-actions .map-btn{margin:0;min-height:46px}.habitat-actions .map-btn{padding:0 18px;border-radius:12px}
-#habitatStatus{margin-top:10px;padding-top:10px;border-top:1px solid rgba(38,58,87,.65)}
-@media(min-width:640px){.habitat-controls{grid-template-columns:minmax(260px,1.4fr) minmax(220px,1fr);align-items:end}.habitat-actions{grid-column:1/-1;max-width:520px}}
-@media(max-width:600px){.map-toolbar{gap:7px;padding:10px}.map-toolbar .map-btn{flex:1 1 calc(50% - 7px);padding:0 10px;white-space:nowrap}.map-toolbar #mapFilterBtn{flex:0 1 auto}.map-toolbar #mapFullscreenBtn{flex:0 1 auto}.map-viewport{min-height:58vh}.map-marker{width:27px;height:27px}.habitat-actions{grid-template-columns:minmax(0,1fr) auto}}
+.map-icon{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 1px 2px #000) drop-shadow(0 0 2px #000)}
+.pal-pin-wrap>*{transition:transform .15s}.mz-mid .pal-pin-wrap>*{transform:scale(.78)}.mz-far .pal-pin-wrap>*{transform:scale(.58)}
+.leaflet-container .leaflet-popup-content-wrapper,.leaflet-container .leaflet-popup-tip{background:rgba(8,17,31,.97);color:var(--text);border:1px solid #456487;box-shadow:var(--shadow)}
+.leaflet-container .leaflet-popup-content{margin:9px 12px;font-size:13px;line-height:1.45}.leaflet-container .leaflet-popup-content b{display:block}
+.leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
+.leaflet-container .leaflet-bar a,.leaflet-container .leaflet-bar a:hover{background:rgba(8,17,31,.94);color:var(--text);border-bottom-color:var(--line)}.leaflet-container .leaflet-bar a.leaflet-disabled{background:#0d1829;color:#4b5d75}
+.spawn-cloud{pointer-events:none}
+.spawn-controls{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;margin-top:12px}
+.spawn-search{width:100%;min-width:0;min-height:46px;border:1px solid var(--line);border-radius:11px;background:#0d1829;color:var(--text);-webkit-text-fill-color:var(--text);caret-color:var(--accent);padding:0 12px;outline:none;appearance:none;-webkit-appearance:none}
+.spawn-search::placeholder{color:#71869f;opacity:1}.spawn-search:focus{outline:3px solid rgba(88,215,255,.35);outline-offset:2px}
+.spawn-controls .map-btn{min-height:46px;border-radius:11px}
+.spawn-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.spawn-chips:empty{display:none}
+.spawn-chip{display:inline-flex;align-items:center;gap:7px;min-height:32px;padding:0 4px 0 10px;border-radius:999px;background:var(--chip);border:1px solid #2a4263;font-size:13px}
+.spawn-chip i{width:12px;height:12px;border-radius:50%;flex:0 0 auto}.spawn-chip button{width:26px;height:26px;border:0;border-radius:50%;background:transparent;color:var(--muted);font-size:17px;line-height:1}
+#spawnStatus{margin-top:10px;padding-top:10px;border-top:1px solid rgba(38,58,87,.65)}
+@media(max-width:600px){.map-toolbar{gap:7px}.map-toolbar .map-btn{flex:1 1 calc(50% - 7px);padding:0 10px;white-space:nowrap}.map-wrap{min-height:58vh}}
+.pal-pin-wrap{background:none;border:0}
+.pal-pin{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#13233a;border:2px solid #ff5a4f;box-shadow:0 1px 4px #000,0 0 0 1px rgba(0,0,0,.6)}.pal-pin.boss{border-color:#ffd166}.pal-pin.predator{border-color:#b86bff}
+.pal-pin img{width:100%;height:100%;object-fit:cover;display:block}
 
 footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
 @media(min-width:640px){
@@ -185,32 +190,22 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
     <section class="section" id="map">
       <div class="panel">
         <h2>Interactive Palworld map</h2>
-        <p class="small">Explore the Main Map and separate World Tree map. Drag to pan, scroll or use ± to zoom, tap markers for coordinates, and filter marker categories.</p>
-        <div class="habitat-controls">
-          <div class="habitat-field">
-            <label class="habitat-label" for="habitatPalSearch">Pal habitat</label>
-            <input class="habitat-search" id="habitatPalSearch" type="search" list="habitatPalNames" placeholder="Search a Pal…" autocomplete="off" spellcheck="false">
-            <datalist id="habitatPalNames"></datalist>
-          </div>
-          <div class="habitat-field">
-            <span class="habitat-label">Habitat time</span>
-            <div class="habitat-time">
-              <label class="habitat-check"><input type="checkbox" id="habitatDay" checked> Day</label>
-              <label class="habitat-check"><input type="checkbox" id="habitatNight" checked> Night</label>
-            </div>
-          </div>
-          <div class="habitat-actions">
-            <button class="loadmore" id="showHabitatBtn" type="button">Show habitat</button>
-            <button class="map-btn" id="clearHabitatBtn" type="button">Clear</button>
-          </div>
+        <p class="small">Main Map and World Tree. Drag to pan, pinch or use ± to zoom, tap an icon for details, tap the map for coordinates. Add Pals to see where they spawn: each Pal gets its own coloured cloud.</p>
+        <label class="small" for="spawnPalSearch" style="display:block;margin-top:10px;font-weight:750">Pal spawn zones</label>
+        <div class="spawn-controls">
+          <input class="spawn-search" id="spawnPalSearch" type="search" list="spawnPalNames" placeholder="Search a Pal…" autocomplete="off" spellcheck="false" enterkeyhint="go">
+          <datalist id="spawnPalNames"></datalist>
+          <button class="map-btn active" id="addSpawnBtn" type="button">Show</button>
+          <button class="map-btn" id="clearSpawnBtn" type="button">Clear</button>
         </div>
-        <div id="habitatStatus" class="small">Search for a Pal to overlay its regular wild habitat.</div>
+        <div class="spawn-chips" id="spawnChips"></div>
+        <div id="spawnStatus" class="small">Choose a Pal to highlight its wild spawn zones. Up to six Pals can be shown at once.</div>
       </div>
       <div class="map-shell" id="mapShell">
         <div class="map-toolbar"><button class="map-btn active" id="mainMapBtn" type="button">Main Map</button><button class="map-btn" id="treeMapBtn" type="button">World Tree</button><button class="map-btn" id="mapFilterBtn" type="button">Filters</button><button class="map-btn" id="mapFullscreenBtn" type="button">Full screen</button><button class="map-btn map-close-full" id="mapFullscreenClose" type="button" aria-label="Close full screen">×</button></div>
-        <div class="map-viewport" id="mapViewport" aria-label="Interactive Palworld map"><div class="map-stage" id="mapStage"></div><div class="map-loading" id="mapLoading">Open the Map tab to load map data.</div><div class="map-filter-panel" id="mapFilters" hidden></div><div class="map-zoom"><button id="mapZoomIn" type="button" aria-label="Zoom in">+</button><button id="mapZoomOut" type="button" aria-label="Zoom out">−</button></div><div class="map-coords" id="mapCoords">X — · Y —</div></div>
+        <div class="map-wrap"><div id="leafletMap" aria-label="Interactive Palworld map"></div><div class="map-filter-panel" id="mapFilters" hidden></div><div class="map-note" id="mapNote">Open the Map tab to load the map.</div><div class="map-coords" id="mapCoords">X — · Y —</div></div>
       </div>
-      <p class="small" style="margin-top:8px">Map terrain, marker coordinates and Palworld UI icons are loaded at runtime from the GPL-3.0 palworld-save-pal project. Palworld-derived imagery remains property of Pocketpair. Palpedia+ does not bundle these game assets in this repository.</p>
+      <p class="small" style="margin-top:8px">Map tiles, marker coordinates and UI icons are loaded at runtime from the GPL-3.0 palworld-save-pal project; wild spawn zones from the MIT-licensed PalDex extraction; map engine: Leaflet. Palworld-derived imagery and data remain property of Pocketpair. Palpedia+ does not bundle these game assets in this repository.</p>
     </section>
 
     <section class="section" id="breeding">
@@ -297,12 +292,15 @@ const URLS = {
   breedingFallback: "https://raw.githubusercontent.com/JohnnyDalvi/Palworld_Smart_Breeder/main/data/breeding/breeding_pairs.csv",
   trustPals: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json/pals.json",
   trustNames: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json/l10n/en/pals.json",
-  mapData: "https://cjbtester1.github.io/palpedia-plus/runtime/map/",
+  mapData: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json/",
+  mapNames: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json/l10n/en/",
   mapTiles: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/psp-ui/static/maps/",
-  mapAssets: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/psp-ui/src/lib/assets/img/",
-  habitatDistribution: "https://cjbtester1.github.io/palpedia-plus/runtime/habitat/DT_PaldexDistributionData.json"
+  mapIcons: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/psp-ui/src/lib/assets/img/",
+  palSpawns: "https://raw.githubusercontent.com/catrenelle/PalDex/master/data/pal_spawn_locations_static.json",
+  leafletJs: ["https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js","https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"],
+  leafletCss: ["https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css","https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"]
 };
-const state = {pals:[], palMap:new Map(), regions:{}, locationDetails:{}, iconUrls:new Map(), active:null, passives:null, dps:null, breeding:null, breedingByChild:null, trustByName:null, mapLoaded:false, mapArea:"MainMap", mapLayers:{}, mapHidden:new Set(), habitatDistribution:null, habitatPal:null, habitatRow:null, mapScale:1, mapX:0, mapY:0, visible:48, filtered:[], iconIds:new Map()};
+const state = {pals:[], palMap:new Map(), regions:{}, locationDetails:{}, iconUrls:new Map(), active:null, passives:null, dps:null, breeding:null, breedingByChild:null, trustByName:null, visible:48, filtered:[], iconIds:new Map()};
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
 const norm = s => String(s ?? "").trim().toLowerCase();
@@ -631,7 +629,7 @@ async function openPal(name){
     <div class="panel"><h3>Movement & mount</h3><div class="kpi-grid"><div class="kpi"><strong>${esc(p.mount||"—")}</strong><span>Mount type</span></div><div class="kpi"><strong>${fmt(p.sprint)}</strong><span>Ride sprint</span></div><div class="kpi"><strong>${fmt(p.run)}</strong><span>Run speed</span></div></div></div>
     <div class="panel"><h3>Work suitability</h3><div class="work">${work||`<span class="small">No base work suitability.</span>`}</div>${(p.ranch_produce||[]).length?`<div class="hr"></div><b>Ranch production</b><div class="chips">${p.ranch_produce.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>`:""}</div>
     <div class="panel"><h3>Drops</h3><div class="chips">${(p.drops||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("")||`<span class="small">No drops listed.</span>`}</div></div>
-    <div class="panel"><h3>Where to catch / obtain</h3><div class="notice">Regular wild regions: ${esc((p.regions||[]).join(", ")||"No regular wild habitat listed.")}. Region coordinates below are approximate centres; the interactive habitat map uses Paldeck distribution data. ${ (p.regions||[]).length ? `<button class="loadmore pal-habitat-btn" data-pal="${esc(p.name)}" type="button" style="margin-top:8px">Show ${esc(p.name)} habitat on map</button>` : "" }</div><div class="chips" style="margin-top:10px"><span class="chip">Wild spawn: ${esc(state.locationDetails[p.name]?.day_night||"not specified")}</span>${(p.eggs||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div><div class="list" style="margin-top:10px">${buildLocations(p)}</div></div>
+    <div class="panel"><h3>Where to catch / obtain</h3><div class="notice">Regular wild regions: ${esc((p.regions||[]).join(", ")||"No regular wild habitat listed.")}. Region coordinates below are approximate centres; the interactive map shows extracted wild spawn zones. <button class="loadmore pal-habitat-btn" data-pal="${esc(p.name)}" type="button" style="margin-top:8px">Show ${esc(p.name)} spawn zones on map</button></div><div class="chips" style="margin-top:10px"><span class="chip">Wild spawn: ${esc(state.locationDetails[p.name]?.day_night||"not specified")}</span>${(p.eggs||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div><div class="list" style="margin-top:10px">${buildLocations(p)}</div></div>
     <div class="panel"><h3>Abilities & recommended skills</h3><div id="skillsSlot"><div class="small">Loading current learnset…</div></div></div>
     <div class="panel"><h3>Recommended passive candidates</h3><div id="passiveSlot"><div class="small">Loading current passive table…</div></div></div>
     <div class="panel"><h3>How to breed ${esc(p.name)}</h3><button class="loadmore" id="loadBreedForPal" type="button">Load exact parent combinations</button><div id="palBreedSlot"></div></div>`;
@@ -752,65 +750,293 @@ async function renderPassives(){
 }
 
 
-function populateHabitatNames(){const d=$("#habitatPalNames");if(d)d.innerHTML=state.pals.filter(p=>(p.regions||[]).length).map(p=>'<option value="'+esc(p.name)+'"></option>').join("")}
-async function ensureHabitatDistribution(){if(state.habitatDistribution)return state.habitatDistribution;$("#habitatStatus").textContent="Loading Paldeck habitat data…";const raw=await getJSON(URLS.habitatDistribution),rows=Array.isArray(raw)?raw[0]?.Rows:raw?.Rows;if(!rows)throw new Error("Habitat data unavailable.");state.habitatDistribution=rows;return rows}
-async function showPalHabitat(name){const p=state.palMap.get(norm(name));if(!p)throw new Error("Choose a Pal from the list.");await ensureMap();await ensureTrustData();const id=state.trustByName?.get(norm(p.name))?.id;if(!id)throw new Error("No species ID for "+p.name);const rows=await ensureHabitatDistribution(),row=rows[id]||Object.entries(rows).find(([k])=>k.toLowerCase()===id.toLowerCase())?.[1];if(!row)throw new Error("No regular wild habitat for "+p.name);state.habitatPal=p.name;state.habitatRow=row;$("#habitatPalSearch").value=p.name;const loc=k=>(row[k]?.Locations||row[k]?.locations||[]),all=loc("dayTimeLocations").concat(loc("nightTimeLocations"));state.mapArea=all.some(q=>mapAreaFor(+q.X,+q.Y)==="MainMap")?"MainMap":"Tree";renderMap(true)}
-function renderHabitatOverlay(){$("#mapStage").querySelector(".habitat-svg")?.remove();const row=state.habitatRow;if(!row)return;const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.classList.add("habitat-svg");svg.setAttribute("viewBox","0 0 8192 8192");svg.style.cssText="position:absolute;inset:0;width:8192px;height:8192px;z-index:3;pointer-events:none";let count=0;for(const [key,on,fill] of [["dayTimeLocations",$("#habitatDay").checked,"rgba(255,145,35,.34)"],["nightTimeLocations",$("#habitatNight").checked,"rgba(104,78,255,.34)"]]){if(!on)continue;const o=row[key]||{},rad=Number(o.Radius||o.radius||2500),a=MAP_AREAS[state.mapArea],cm=(a.maxX-a.minX)/MAP_SIZE;for(const q of o.Locations||o.locations||[]){if(mapAreaFor(+q.X,+q.Y)!==state.mapArea)continue;const p=worldToMapPixel(+q.X,+q.Y),el=document.createElementNS("http://www.w3.org/2000/svg","circle");el.setAttribute("cx",p.x);el.setAttribute("cy",p.y);el.setAttribute("r",Math.max(5,rad/cm));el.setAttribute("fill",fill);svg.appendChild(el);count++}}$("#mapStage").appendChild(svg);$("#habitatStatus").innerHTML="<b>"+esc(state.habitatPal)+"</b> · "+count.toLocaleString()+" habitat points · orange day / violet night"}
-function clearHabitat(){state.habitatPal=null;state.habitatRow=null;$("#habitatPalSearch").value="";renderMap(false);$("#habitatStatus").textContent="Search for a Pal to overlay its regular wild habitat."}
-
-const MAP_SIZE=8192,MAP_TILE_SIZE=512,MAP_TILE_Z=4;
-const MAP_AREAS={MainMap:{dir:"mainmap",minX:-1099400,maxX:349400,minY:-724400,maxY:724400},Tree:{dir:"tree",minX:347351.5,maxX:689148.5,minY:-818197,maxY:-476400}};
+// ---------- Interactive map (Leaflet, CRS.Simple) ----------
+// Tile pyramid: zoom 0–4, 512px tiles, 8192px at zoom 4. Map horizontal axis = world +Y, vertical axis = world -X (north up).
+const MAP_SIZE=8192,MAP_NATIVE_ZOOM=4,MAP_UNITS=MAP_SIZE/2**MAP_NATIVE_ZOOM;
+const MAP_AREAS={
+  Tree:{dir:"tree",name:"World Tree",minX:347351.5,maxX:689148.5,minY:-818197,maxY:-476400},
+  MainMap:{dir:"mainmap",name:"Main Map",minX:-1099400,maxX:349400,minY:-724400,maxY:724400}
+};
 const MAP_CATS=[
-{id:"fast_travel",name:"Fast Travel",file:"fast_travel_points.json",icon:"t_icon_compass_fttower.webp",show:true,filter:x=>x.class!=="BP_LevelObject_UnlockMapPoint_C"},
+{id:"fast_travel",name:"Fast Travel",file:"fast_travel_points.json",names:"fast_travel_points.json",icon:"t_icon_compass_fttower.webp",show:true,filter:x=>x.class!=="BP_LevelObject_UnlockMapPoint_C"},
 {id:"watchtower",name:"Watchtowers",file:"fast_travel_points.json",icon:"t_icon_compass_ftunlockmap.webp",show:true,filter:x=>x.class==="BP_LevelObject_UnlockMapPoint_C"},
-{id:"tower_boss",name:"Tower Bosses",file:"towers.json",icon:"t_icon_compass_tower.webp",show:true},
+{id:"tower_boss",name:"Tower Bosses",file:"towers.json",names:"towers.json",icon:"t_icon_compass_tower.webp",show:true},
+{id:"alpha_pals",name:"Alpha Pals",file:"bosses.json",icon:"t_icon_compass_06.webp",portrait:"alpha",show:true,filter:x=>x.spawn_type==="alpha"},
+{id:"boss_pals",name:"Boss Pals",file:"bosses.json",icon:"t_icon_compass_06.webp",portrait:"boss",show:false,filter:x=>x.spawn_type==="boss"},
+{id:"predator_pals",name:"Predator Pals",file:"bosses.json",icon:"t_icon_compass_06.webp",portrait:"predator",show:false,filter:x=>x.spawn_type==="predator"},
+{id:"bounty",name:"Bounties",file:"bosses.json",icon:"t_icon_compass_bounty.webp",show:false,filter:x=>x.spawn_type==="bounty"},
 {id:"dungeons",name:"Dungeons",file:"dungeons.json",icon:"t_icon_compass_dungeon.webp",show:false},
-{id:"effigies",name:"Effigies",file:"effigies.json",icon:"t_icon_compass_relic.webp",show:true},
-{id:"journals",name:"Journals / Notes",file:"notes.json",icon:"t_itemicon_consume_technologybook_g1.webp",show:false},
+{id:"effigies",name:"Lifmunk Effigies",file:"effigies.json",icon:"t_icon_compass_relic.webp",show:false},
+{id:"journals",name:"Journals",file:"notes.json",icon:"t_itemicon_consume_technologybook_g1.webp",show:false},
 {id:"skill_fruits",name:"Skill Fruit Trees",file:"skill_fruits.json",icon:"t_icon_compass_09.webp",show:false},
 {id:"ancient_ruins",name:"Ancient Ruins",file:"ancient_ruins.json",icon:"t_icon_ancient_tech_point.webp",show:false},
-{id:"alpha_pals",name:"Alpha Pals",file:"bosses.json",icon:"t_icon_compass_06.webp",show:true,filter:x=>x.spawn_type==="alpha"},
-{id:"predator_pals",name:"Predator Pals",file:"bosses.json",icon:"t_icon_compass_06.webp",show:false,filter:x=>x.spawn_type==="predator"},
-{id:"bounty",name:"Bounties",file:"bosses.json",icon:"t_icon_compass_bounty.webp",show:false,filter:x=>x.spawn_type==="bounty"},
 {id:"camps",name:"NPC Camps",file:"camps.json",icon:"t_icon_compass_camp.webp",show:false},
 {id:"eggs",name:"Egg Spawners",file:"eggs_spawners.json",icon:"t_icon_compass_10.webp",show:false,lazy:true}
 ];
-function mapAreaFor(x,y){const t=MAP_AREAS.Tree;if(x>=t.minX&&x<=t.maxX&&y>=t.minY&&y<=t.maxY)return "Tree";const m=MAP_AREAS.MainMap;return x>=m.minX&&x<=m.maxX&&y>=m.minY&&y<=m.maxY?"MainMap":null}
-function worldToMapPixel(x,y,area=state.mapArea){const a=MAP_AREAS[area],cm=(a.maxX-a.minX)/MAP_SIZE;return{x:(y-a.minY)/cm,y:(x-a.minX)/cm}}
-function pixelToGame(px,py,area=state.mapArea){const a=MAP_AREAS[area],cm=(a.maxX-a.minX)/MAP_SIZE,wx=py*cm+a.minX,wy=px*cm+a.minY;return{x:Math.round((wy-157935)/459),y:Math.round((wx+123930)/459)}}
-function mapIconUrl(cat){return URLS.mapAssets+cat.icon}
-function normalizeMapRows(raw){return Array.isArray(raw)?raw:Object.entries(raw||{}).map(([key,v])=>Object.assign({_key:key},v))}
-function mapLabel(cat,row){if(["alpha_pals","predator_pals","bounty"].includes(cat.id)){const n=String(row.character_id||"").replace(/^BOSS_/i,"").replaceAll("_"," ");return(n&&n!=="None"?n:cat.name)+(row.level?" · Lv. "+row.level:"")}if(cat.id==="journals")return row._key||"Journal";if(cat.id==="fast_travel")return row.id||"Fast Travel";return cat.name.replace(/s$/,"")}
-async function loadMapCategory(cat){if(state.mapLayers[cat.id])return;try{const raw=await getJSON(URLS.mapData+cat.file);state.mapLayers[cat.id]=normalizeMapRows(raw).filter(x=>Number.isFinite(+x.x)&&Number.isFinite(+x.y)&&(!cat.filter||cat.filter(x)))}catch(e){console.warn("Map category unavailable:",cat.id,e);state.mapLayers[cat.id]=[]}}
-async function ensureMap(){
-  if(state.mapLoaded)return;
-  state.mapLoaded=true;
-  state.mapHidden=new Set(MAP_CATS.filter(x=>!x.show).map(x=>x.id));
-  renderMapFilters();
-  renderMap(true);
-  $("#mapLoading").hidden=false;
-  $("#mapLoading").textContent="Loading current Palworld map markers…";
-  await Promise.all(MAP_CATS.filter(x=>!x.lazy).map(loadMapCategory));
-  renderMapMarkers();
-  renderHabitatOverlay();
-  $("#mapLoading").hidden=true;
+const SPAWN_COLOURS=["#ff8a2b","#a46bff","#2fd6ff","#7cff5a","#ff4fa0","#ffe14a"];
+const SPAWN_MAX=6,CLOUD_RES=2048;
+const M={L:null,map:null,ready:null,area:"MainMap",tiles:null,markers:null,clouds:null,hidden:new Set(MAP_CATS.filter(c=>!c.show).map(c=>c.id)),rows:{},names:{},icons:{},spawns:null,spawnsLoading:null,spawnById:new Map(),spawnByName:new Map(),selected:[],cloudUrl:null};
+
+function mapNote(text,kind=""){const n=$("#mapNote");if(!n)return;n.hidden=!text;n.textContent=text||"";n.className="map-note"+(kind?" "+kind:"")}
+function mapOf(x,y){for(const [k,a] of Object.entries(MAP_AREAS))if(x>=a.minX&&x<=a.maxX&&y>=a.minY&&y<=a.maxY)return k;return null}
+function cmPerPx(area){const a=MAP_AREAS[area];return (a.maxX-a.minX)/MAP_SIZE}
+// World (cm) -> zoom-4 pixel, top-left origin.
+function worldToPixel(x,y,area){const a=MAP_AREAS[area],cm=cmPerPx(area);return {x:(y-a.minY)/cm,y:MAP_SIZE-(x-a.minX)/cm}}
+function pixelToLatLng(p){return [-p.y/2**MAP_NATIVE_ZOOM,p.x/2**MAP_NATIVE_ZOOM]}
+function worldToLatLng(x,y,area){return pixelToLatLng(worldToPixel(x,y,area))}
+function latLngToWorld(ll,area){const a=MAP_AREAS[area],cm=cmPerPx(area),px=ll.lng*2**MAP_NATIVE_ZOOM,py=-ll.lat*2**MAP_NATIVE_ZOOM;return {x:a.minX+(MAP_SIZE-py)*cm,y:a.minY+px*cm}}
+// In-game map readout (same constants the game UI uses).
+function worldToGame(x,y){return {x:Math.round((y-157935)/459),y:Math.round((x+123930)/459)}}
+function gameText(x,y){const g=worldToGame(x,y);return "X "+g.x+" · Y "+g.y}
+
+function loadAsset(urls,kind){
+  return urls.reduce((p,url)=>p.catch(()=>new Promise((ok,fail)=>{
+    const el=document.createElement(kind==="css"?"link":"script");
+    if(kind==="css"){el.rel="stylesheet";el.href=url}else{el.src=url;el.async=true}
+    el.onload=()=>ok(url);el.onerror=()=>{el.remove();fail(new Error("Could not load "+url))};
+    document.head.appendChild(el);
+  })),Promise.reject(new Error("start")));
 }
-function renderMapTiles(){const stage=$("#mapStage"),a=MAP_AREAS[state.mapArea],frag=document.createDocumentFragment();for(let x=0;x<16;x++)for(let y=0;y<16;y++){const img=document.createElement("img");img.className="map-tile";img.alt="";img.loading="eager";img.decoding="async";img.draggable=false;img.style.left=x*MAP_TILE_SIZE+"px";img.style.top=y*MAP_TILE_SIZE+"px";img.src=URLS.mapTiles+a.dir+"/"+MAP_TILE_Z+"/"+x+"/"+y+".webp";frag.appendChild(img)}stage.replaceChildren(frag)}
-function renderMapMarkers(){const stage=$("#mapStage"),frag=document.createDocumentFragment();stage.querySelectorAll(".map-marker,.map-pop").forEach(x=>x.remove());for(const cat of MAP_CATS){if(state.mapHidden.has(cat.id))continue;for(const row of state.mapLayers[cat.id]||[]){if(mapAreaFor(+row.x,+row.y)!==state.mapArea)continue;const p=worldToMapPixel(+row.x,+row.y),b=document.createElement("button");b.type="button";b.className="map-marker";b.style.left=p.x+"px";b.style.top=p.y+"px";b.title=mapLabel(cat,row);const im=document.createElement("img");im.src=mapIconUrl(cat);im.alt="";im.onerror=()=>{im.remove();const d=document.createElement("div");d.className="fallback-pin";b.appendChild(d)};b.appendChild(im);b.addEventListener("click",e=>{e.stopPropagation();showMapPopup(b,cat,row)});frag.appendChild(b)}}stage.appendChild(frag)}
-function showMapPopup(marker,cat,row){document.querySelector(".map-pop")?.remove();const p=worldToMapPixel(+row.x,+row.y),g=pixelToGame(p.x,p.y),pop=document.createElement("div");pop.className="map-pop";pop.style.left=Math.min(MAP_SIZE-300,p.x+18)+"px";pop.style.top=Math.max(10,p.y-20)+"px";pop.innerHTML="<b>"+esc(mapLabel(cat,row))+"</b><div class=small>"+esc(cat.name)+"</div><div class=coord>X "+g.x+" · Y "+g.y+"</div>";$("#mapStage").appendChild(pop)}
-function applyMapTransform(){$("#mapStage").style.transform="translate("+state.mapX+"px,"+state.mapY+"px) scale("+state.mapScale+")"}
-function fitMap(){const v=$("#mapViewport"),s=Math.min(v.clientWidth/MAP_SIZE,v.clientHeight/MAP_SIZE);state.mapScale=Math.max(.055,s);state.mapX=(v.clientWidth-MAP_SIZE*state.mapScale)/2;state.mapY=(v.clientHeight-MAP_SIZE*state.mapScale)/2;applyMapTransform()}
-function zoomMap(factor,cx,cy){const v=$("#mapViewport"),x=cx??v.clientWidth/2,y=cy??v.clientHeight/2,old=state.mapScale,next=Math.max(.045,Math.min(2.2,old*factor));if(next===old)return;const wx=(x-state.mapX)/old,wy=(y-state.mapY)/old;state.mapScale=next;state.mapX=x-wx*next;state.mapY=y-wy*next;applyMapTransform()}
-function renderMap(reset=false){renderMapTiles();renderMapMarkers();renderHabitatOverlay();$("#mainMapBtn").classList.toggle("active",state.mapArea==="MainMap");$("#treeMapBtn").classList.toggle("active",state.mapArea==="Tree");if(reset)requestAnimationFrame(fitMap);else applyMapTransform()}
-function renderMapFilters(){const box=$("#mapFilters");box.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><b>Map markers</b><button class="map-btn" id="mapAllToggle" type="button">Show all</button></div><div class="small" style="margin:5px 0 8px">Choose which marker types are visible.</div>'+MAP_CATS.map(cat=>'<div class="map-filter-row"><img src="'+mapIconUrl(cat)+'" alt=""><label><input type="checkbox" data-map-cat="'+cat.id+'" '+(state.mapHidden.has(cat.id)?"":"checked")+'> '+esc(cat.name)+'</label><span class="map-count">'+(state.mapLayers[cat.id]||[]).length.toLocaleString()+'</span></div>').join("");box.querySelectorAll("[data-map-cat]").forEach(x=>x.addEventListener("change",async()=>{const id=x.dataset.mapCat,cat=MAP_CATS.find(c=>c.id===id);if(x.checked){state.mapHidden.delete(id);if(cat.lazy&&!state.mapLayers[id]){x.disabled=true;await loadMapCategory(cat);x.disabled=false}}else state.mapHidden.add(id);renderMap(false);renderMapFilters()}));$("#mapAllToggle").addEventListener("click",async()=>{state.mapHidden.clear();await Promise.all(MAP_CATS.map(loadMapCategory));renderMap(false);renderMapFilters()})}
-function setMapArea(area){state.mapArea=area;document.querySelector(".map-pop")?.remove();renderMap(true)}
-function initMapEvents(){const v=$("#mapViewport");let drag=false,lx=0,ly=0;v.addEventListener("pointerdown",e=>{if(e.target.closest(".map-marker,.map-filter-panel,.map-zoom"))return;drag=true;lx=e.clientX;ly=e.clientY;v.setPointerCapture(e.pointerId);v.classList.add("dragging")});v.addEventListener("pointermove",e=>{if(drag){state.mapX+=e.clientX-lx;state.mapY+=e.clientY-ly;lx=e.clientX;ly=e.clientY;applyMapTransform()}const r=v.getBoundingClientRect(),px=(e.clientX-r.left-state.mapX)/state.mapScale,py=(e.clientY-r.top-state.mapY)/state.mapScale;if(px>=0&&px<=MAP_SIZE&&py>=0&&py<=MAP_SIZE){const g=pixelToGame(px,py);$("#mapCoords").textContent="X "+g.x+" · Y "+g.y}});const end=()=>{drag=false;v.classList.remove("dragging")};v.addEventListener("pointerup",end);v.addEventListener("pointercancel",end);v.addEventListener("wheel",e=>{e.preventDefault();const r=v.getBoundingClientRect();zoomMap(e.deltaY<0?1.22:.82,e.clientX-r.left,e.clientY-r.top)},{passive:false});v.addEventListener("click",e=>{if(!e.target.closest(".map-marker"))document.querySelector(".map-pop")?.remove()});$("#mapZoomIn").addEventListener("click",()=>zoomMap(1.3));$("#mapZoomOut").addEventListener("click",()=>zoomMap(.77));$("#mainMapBtn").addEventListener("click",()=>setMapArea("MainMap"));$("#treeMapBtn").addEventListener("click",()=>setMapArea("Tree"));$("#mapFilterBtn").addEventListener("click",()=>{$("#mapFilters").hidden=!$("#mapFilters").hidden});const shell=$("#mapShell"),closeFull=()=>{shell.classList.remove("map-fullscreen");document.body.style.overflow="";$("#mapFullscreenBtn").textContent="Full screen";requestAnimationFrame(fitMap)};$("#mapFullscreenBtn").addEventListener("click",()=>{shell.classList.add("map-fullscreen");document.body.style.overflow="hidden";$("#mapFullscreenBtn").textContent="Exit full screen";requestAnimationFrame(fitMap)});$("#mapFullscreenClose").addEventListener("click",closeFull);window.addEventListener("keydown",e=>{if(e.key==="Escape"&&shell.classList.contains("map-fullscreen"))closeFull()});window.addEventListener("resize",()=>{if($("#map").classList.contains("active"))fitMap()})}
+async function ensureLeaflet(){
+  if(window.L&&window.L.map)return window.L;
+  await Promise.all([loadAsset(URLS.leafletCss,"css"),loadAsset(URLS.leafletJs,"js")]);
+  if(!window.L||!window.L.map)throw new Error("Leaflet map engine unavailable.");
+  return window.L;
+}
+function ensureMap(){
+  if(!M.ready)M.ready=initLeafletMap().catch(e=>{M.ready=null;throw e});
+  return M.ready.then(()=>requestAnimationFrame(()=>M.map&&M.map.invalidateSize()));
+}
+async function initLeafletMap(){
+  mapNote("Loading map engine…");
+  const L=M.L=await ensureLeaflet();
+  const bounds=L.latLngBounds([[-MAP_UNITS,0],[0,MAP_UNITS]]);
+  const map=M.map=L.map("leafletMap",{crs:L.CRS.Simple,minZoom:-2,maxZoom:7,zoomSnap:.25,zoomDelta:.5,wheelPxPerZoomLevel:90,maxBounds:bounds.pad(.35),maxBoundsViscosity:.8,attributionControl:false,preferCanvas:false});
+  M.bounds=bounds;
+  M.markers=L.layerGroup().addTo(map);
+  map.on("mousemove",e=>{const w=latLngToWorld(e.latlng,M.area);$("#mapCoords").textContent=gameText(w.x,w.y)});
+  map.on("click",e=>mapClickInfo(e.latlng));
+  // Shrink icons when zoomed out so the whole map stays readable, like the in-game map.
+  const sizeIcons=()=>{const z=map.getZoom(),c=map.getContainer().classList;c.toggle("mz-far",z<0);c.toggle("mz-mid",z>=0&&z<1.5)};
+  map.on("zoomend",sizeIcons);
+  setMapArea(M.area,true);sizeIcons();
+  mapNote("Loading map markers…");
+  await Promise.allSettled(MAP_CATS.filter(c=>!c.lazy&&!M.hidden.has(c.id)).map(loadMapCategory));
+  renderMapMarkers();renderMapFilters();
+  mapNote("");
+  ensureSpawns().catch(e=>console.warn(e));
+  Promise.allSettled(MAP_CATS.filter(c=>!c.lazy).map(loadMapCategory)).then(renderMapFilters);
+}
+function setMapArea(area,fit=true){
+  M.area=area;
+  const L=M.L,map=M.map;
+  $("#mainMapBtn").classList.toggle("active",area==="MainMap");
+  $("#treeMapBtn").classList.toggle("active",area==="Tree");
+  if(!map)return;
+  map.closePopup();
+  if(M.tiles)map.removeLayer(M.tiles);
+  M.tiles=L.tileLayer(URLS.mapTiles+MAP_AREAS[area].dir+"/{z}/{x}/{y}.webp",{tileSize:512,minNativeZoom:0,maxNativeZoom:MAP_NATIVE_ZOOM,minZoom:-2,maxZoom:7,noWrap:true,bounds:M.bounds,keepBuffer:3,errorTileUrl:"data:image/gif;base64,R0lGODlhAQABAAAAACw="}).addTo(map);
+  M.tiles.bringToBack();
+  M.tiles.on("tileerror",()=>{if(!M.tileErrorShown){M.tileErrorShown=true;mapNote("Some map tiles failed to load. Check your connection.","bad")}});
+  renderMapMarkers();renderSpawnClouds();
+  if(fit)map.fitBounds(M.bounds,{animate:false});
+}
+async function loadJSONOnce(key,url,timeout=20000){if(!(key in M.names))M.names[key]=getJSON(url,timeout).catch(e=>{delete M.names[key];throw e});return M.names[key]}
+async function loadMapCategory(cat){
+  if(M.rows[cat.id])return M.rows[cat.id];
+  try{
+    const [raw,names]=await Promise.all([loadJSONOnce("data:"+cat.file,URLS.mapData+cat.file),cat.names?loadJSONOnce("l10n:"+cat.names,URLS.mapNames+cat.names).catch(()=>({})):null]);
+    if(cat.file==="bosses.json")await ensureTrustData().catch(()=>{});
+    const rows=(Array.isArray(raw)?raw.map(v=>({...v})):Object.entries(raw||{}).map(([k,v])=>({_key:k,...v})))
+      .filter(r=>Number.isFinite(+r.x)&&Number.isFinite(+r.y)&&(!cat.filter||cat.filter(r)));
+    rows.forEach(r=>{r._area=mapOf(+r.x,+r.y);r._label=markerLabel(cat,r,names)});
+    return M.rows[cat.id]=rows;
+  }catch(e){console.warn("Map category unavailable:",cat.id,e);M.rows[cat.id]=[];return []}
+}
+function palNameForId(id){
+  if(!id)return "";
+  const base=String(id).replace(/^BOSS_/i,"");
+  for(const [n,v] of state.trustByName||[])if(v.id.toLowerCase()===base.toLowerCase())return state.palMap.get(n)?.name||titleCase(n);
+  return base.replaceAll("_"," ");
+}
+function titleCase(s){return String(s).replace(/\b\w/g,c=>c.toUpperCase())}
+function biomeFromClass(c,re){const m=String(c||"").match(re);return m?titleCase(m[1].replace(/_/g," ").replace(/\d+$/,"").trim()):""}
+function markerLabel(cat,r,names){
+  if(cat.portrait)return (palNameForId(palIdOf(r))||cat.name)+(r.level?" · Lv. "+r.level:"");
+  if(cat.id==="bounty"){const n=String(r.spawner_id||"").replace(/^BOSS_/i,"").replace(/_/g," ").replace(/([a-z])([A-Z0-9])/g,"$1 $2");return "Bounty"+(n?" · "+n:"")+(r.level?" · Lv. "+r.level:"")}
+  if(names&&names[r._key]?.localized_name)return names[r._key].localized_name;
+  if(cat.id==="dungeons"){const b=biomeFromClass(r.class,/DungeonPortalMarker_([A-Za-z]+)/);return "Dungeon"+(b?" · "+b:"")}
+  if(cat.id==="eggs"){const m=String(r.class||"").match(/palegg_([a-z]+)_grade_0?(\d+)/i);return m?"Egg · "+titleCase(m[1])+" (grade "+m[2]+")":"Egg"}
+  if(cat.id==="skill_fruits"){const b=biomeFromClass(r.class,/SkillFruits_([A-Za-z]+)_C$/);return "Skill Fruit Tree"+(b?" · "+b:"")}
+  if(cat.id==="journals")return "Journal"+(r._key?" · "+r._key:"");
+  if(cat.id==="fast_travel")return "Fast Travel"+(r.id?" · "+r.id:"");
+  return cat.name.replace(/s$/,"");
+}
+function palIdOf(r){const id=r.pal||r.character_id;return id&&id!=="None"?String(id).replace(/^BOSS_/i,""):""}
+// Alpha / boss / predator Pals use the game's small round Pal portraits, like the in-game map.
+function markerIconFor(cat,r){
+  const id=cat.portrait&&palIdOf(r);
+  if(!id)return markerIcon(cat);
+  const key="pal:"+cat.portrait+":"+id;
+  if(!M.icons[key])M.icons[key]=M.L.divIcon({className:"pal-pin-wrap",iconSize:[34,34],iconAnchor:[17,17],popupAnchor:[0,-15],
+    html:`<div class="pal-pin ${cat.portrait}"><img src="${esc(URLS.mapIcons+"t_"+id.toLowerCase()+"_icon_normal.webp")}" alt="" onerror="this.onerror=null;this.src='${esc(URLS.mapIcons+cat.icon)}'"></div>`});
+  return M.icons[key];
+}
+function markerIcon(cat){
+  if(!M.icons[cat.id])M.icons[cat.id]=M.L.divIcon({className:"pal-pin-wrap",iconSize:[28,28],iconAnchor:[14,14],popupAnchor:[0,-12],html:`<img class="map-icon" src="${esc(URLS.mapIcons+cat.icon)}" alt="">`});
+  return M.icons[cat.id];
+}
+function renderMapMarkers(){
+  if(!M.markers)return;
+  M.markers.clearLayers();
+  for(const cat of MAP_CATS){
+    if(M.hidden.has(cat.id))continue;
+    for(const r of M.rows[cat.id]||[]){
+      if(r._area!==M.area)continue;
+      M.L.marker(worldToLatLng(+r.x,+r.y,M.area),{icon:markerIconFor(cat,r),title:r._label,keyboard:false})
+        .bindPopup(`<b>${esc(r._label)}</b><span class="small">${esc(cat.name)}</span><div class="coord">${esc(gameText(+r.x,+r.y))}</div>`)
+        .addTo(M.markers);
+    }
+  }
+}
+function renderMapFilters(){
+  const box=$("#mapFilters");
+  box.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>Map markers</b><span style="display:flex;gap:6px"><button class="map-btn" id="mapAllOn" type="button">All</button><button class="map-btn" id="mapAllOff" type="button">None</button></span></div><div class="small" style="margin:5px 0 8px">Counts are for the whole world.</div>`+
+    MAP_CATS.map(cat=>`<div class="map-filter-row"><img src="${esc(URLS.mapIcons+cat.icon)}" alt=""><label><input type="checkbox" data-map-cat="${cat.id}" ${M.hidden.has(cat.id)?"":"checked"}> ${esc(cat.name)}</label><span class="map-count">${M.rows[cat.id]?M.rows[cat.id].length.toLocaleString():"—"}</span></div>`).join("");
+  box.querySelectorAll("[data-map-cat]").forEach(x=>x.addEventListener("change",async()=>{
+    const cat=MAP_CATS.find(c=>c.id===x.dataset.mapCat);
+    if(x.checked){M.hidden.delete(cat.id);if(!M.rows[cat.id]){x.disabled=true;await loadMapCategory(cat);x.disabled=false}}else M.hidden.add(cat.id);
+    renderMapMarkers();renderMapFilters();
+  }));
+  $("#mapAllOn").addEventListener("click",async()=>{M.hidden.clear();mapNote("Loading all markers…");await Promise.allSettled(MAP_CATS.map(loadMapCategory));mapNote("");renderMapMarkers();renderMapFilters()});
+  $("#mapAllOff").addEventListener("click",()=>{MAP_CATS.forEach(c=>M.hidden.add(c.id));renderMapMarkers();renderMapFilters()});
+}
+
+// ---------- Wild spawn zones ----------
+function ensureSpawns(){
+  if(M.spawns)return Promise.resolve(M.spawns);
+  if(!M.spawnsLoading)M.spawnsLoading=getJSON(URLS.palSpawns,45000).then(raw=>{
+    const out=new Map();
+    for(const [id,v] of Object.entries(raw||{})){
+      const locs=(v?.locations||[]).filter(l=>Number.isFinite(+l.x)&&Number.isFinite(+l.y)).map(l=>({x:+l.x,y:+l.y,r:+l.radius||15000,min:l.levelMin,max:l.levelMax,area:mapOf(+l.x,+l.y)})).filter(l=>l.area);
+      if(!locs.length||!v.name)continue;
+      out.set(id,{id,name:String(v.name),locs});
+    }
+    if(!out.size)throw new Error("Spawn dataset is empty.");
+    M.spawns=out;M.spawnById=out;M.spawnByName=new Map([...out.values()].map(s=>[norm(s.name),s]));
+    $("#spawnPalNames").innerHTML=[...out.values()].map(s=>s.name).sort((a,b)=>a.localeCompare(b)).map(n=>`<option value="${esc(n)}"></option>`).join("");
+    return out;
+  }).catch(e=>{M.spawnsLoading=null;throw e});
+  return M.spawnsLoading;
+}
+async function findSpawnEntry(name){
+  await ensureSpawns();
+  const k=norm(name);
+  let s=M.spawnByName.get(k);
+  if(!s){await ensureTrustData().catch(()=>{});const id=state.trustByName?.get(k)?.id;if(id)s=M.spawnById.get(id)||[...M.spawnById.values()].find(v=>v.id.toLowerCase()===id.toLowerCase())}
+  if(!s){const partial=[...M.spawnByName.entries()].filter(([n])=>n.includes(k));if(partial.length===1)s=partial[0][1]}
+  return s||null;
+}
+async function addSpawnPal(name,{replace=false,focus=true}={}){
+  name=String(name||"").trim();
+  if(!name){spawnStatus("Type a Pal name first.");return}
+  spawnStatus("Loading wild spawn data…");
+  await ensureMap();
+  const s=await findSpawnEntry(name);
+  if(!s){spawnStatus(`No regular wild spawn zones found for “${name}”. It may only come from breeding, eggs, raids, dungeons or bosses.`);return}
+  if(replace)M.selected=[];
+  if(!M.selected.includes(s.id)){
+    if(M.selected.length>=SPAWN_MAX)M.selected.shift();
+    M.selected.push(s.id);
+  }
+  $("#spawnPalSearch").value="";
+  const counts={MainMap:0,Tree:0};s.locs.forEach(l=>counts[l.area]++);
+  if(focus&&!counts[M.area])setMapArea(counts.MainMap?"MainMap":"Tree",false);
+  renderSpawnChips();renderSpawnClouds();
+  if(focus){
+    const pts=s.locs.filter(l=>l.area===M.area).map(l=>worldToLatLng(l.x,l.y,M.area));
+    if(pts.length)M.map.fitBounds(M.L.latLngBounds(pts).pad(.25),{maxZoom:3,animate:true});
+  }
+}
+function removeSpawnPal(id){M.selected=M.selected.filter(x=>x!==id);renderSpawnChips();renderSpawnClouds()}
+function clearSpawns(){M.selected=[];renderSpawnChips();renderSpawnClouds()}
+function spawnStatus(html,raw=false){const el=$("#spawnStatus");if(raw)el.innerHTML=html;else el.textContent=html}
+function spawnColour(id){return SPAWN_COLOURS[M.selected.indexOf(id)%SPAWN_COLOURS.length]}
+function levelRange(locs){const lo=Math.min(...locs.map(l=>+l.min).filter(Number.isFinite)),hi=Math.max(...locs.map(l=>+l.max).filter(Number.isFinite));return Number.isFinite(lo)?(lo===hi?"Lv. "+lo:"Lv. "+lo+"–"+hi):""}
+function renderSpawnChips(){
+  const box=$("#spawnChips");
+  box.innerHTML=M.selected.map(id=>{const s=M.spawnById.get(id);return `<span class="spawn-chip"><i style="background:${spawnColour(id)}"></i>${esc(s.name)}<button type="button" data-remove-spawn="${esc(id)}" aria-label="Remove ${esc(s.name)}">×</button></span>`}).join("");
+  box.querySelectorAll("[data-remove-spawn]").forEach(b=>b.addEventListener("click",()=>removeSpawnPal(b.dataset.removeSpawn)));
+  if(!M.selected.length){spawnStatus("Choose a Pal to highlight its wild spawn zones. Up to six Pals can be shown at once.");return}
+  spawnStatus(M.selected.map(id=>{
+    const s=M.spawnById.get(id),here=s.locs.filter(l=>l.area===M.area),other=s.locs.length-here.length,p=state.palMap.get(norm(s.name)),dn=state.locationDetails[p?.name||s.name]?.day_night;
+    return `<b style="color:${spawnColour(id)}">${esc(s.name)}</b> · ${here.length?`${here.length.toLocaleString()} spawn points on ${esc(MAP_AREAS[M.area].name)} · ${esc(levelRange(here))}`:`none on ${esc(MAP_AREAS[M.area].name)}`}${other?` · ${other.toLocaleString()} on ${esc(MAP_AREAS[M.area==="MainMap"?"Tree":"MainMap"].name)}`:""}${dn?` · ${esc(dn==="both"?"day & night":dn+" only")}`:""}`;
+  }).join("<br>")+`<br><span class="small">Tap inside a cloud for the local level range.</span>`,true);
+}
+// Each Pal's spawn points are painted as soft radial blobs on an offscreen canvas,
+// merged into one cloud per Pal, tinted, and laid over the map as a single image.
+function renderSpawnClouds(){
+  if(!M.map)return;
+  if(M.clouds){M.map.removeLayer(M.clouds);M.clouds=null}
+  if(M.cloudUrl){URL.revokeObjectURL(M.cloudUrl);M.cloudUrl=null}
+  if(!M.selected.length)return;
+  const scale=CLOUD_RES/MAP_SIZE,out=document.createElement("canvas"),mask=document.createElement("canvas");
+  out.width=out.height=mask.width=mask.height=CLOUD_RES;
+  const octx=out.getContext("2d"),mctx=mask.getContext("2d");
+  let drawn=0;
+  for(const id of M.selected){
+    const s=M.spawnById.get(id);if(!s)continue;
+    mctx.globalCompositeOperation="source-over";mctx.clearRect(0,0,CLOUD_RES,CLOUD_RES);
+    for(const l of s.locs){
+      if(l.area!==M.area)continue;
+      const p=worldToPixel(l.x,l.y,M.area),cx=p.x*scale,cy=p.y*scale,r=Math.max(6,l.r/cmPerPx(M.area)*scale*1.9);
+      const g=mctx.createRadialGradient(cx,cy,0,cx,cy,r);
+      g.addColorStop(0,"rgba(0,0,0,.85)");g.addColorStop(.45,"rgba(0,0,0,.55)");g.addColorStop(1,"rgba(0,0,0,0)");
+      mctx.fillStyle=g;mctx.beginPath();mctx.arc(cx,cy,r,0,Math.PI*2);mctx.fill();drawn++;
+    }
+    mctx.globalCompositeOperation="source-in";mctx.fillStyle=spawnColour(id);mctx.fillRect(0,0,CLOUD_RES,CLOUD_RES);
+    octx.globalAlpha=.72;octx.drawImage(mask,0,0);
+  }
+  if(!drawn){renderSpawnChips();return}
+  out.toBlob(b=>{
+    if(!b||!M.map)return;
+    if(M.clouds)M.map.removeLayer(M.clouds);
+    if(M.cloudUrl)URL.revokeObjectURL(M.cloudUrl);
+    M.cloudUrl=URL.createObjectURL(b);
+    M.clouds=M.L.imageOverlay(M.cloudUrl,M.bounds,{className:"spawn-cloud",interactive:false,zIndex:2}).addTo(M.map);
+  },"image/png");
+  renderSpawnChips();
+}
+function mapClickInfo(ll){
+  const w=latLngToWorld(ll,M.area),rows=[];
+  for(const id of M.selected){
+    const s=M.spawnById.get(id);if(!s)continue;
+    const near=s.locs.filter(l=>l.area===M.area&&Math.hypot(l.x-w.x,l.y-w.y)<=l.r*1.9);
+    if(near.length)rows.push(`<div><span style="color:${spawnColour(id)}">●</span> ${esc(s.name)} · ${esc(levelRange(near))}</div>`);
+  }
+  M.L.popup().setLatLng(ll).setContent(`${rows.length?`<b>Wild spawns here</b>${rows.join("")}`:""}<div class="coord">${esc(gameText(w.x,w.y))}</div>`).openOn(M.map);
+}
+function initMapUI(){
+  $("#mainMapBtn").addEventListener("click",()=>{setMapArea("MainMap");renderSpawnChips()});
+  $("#treeMapBtn").addEventListener("click",()=>{setMapArea("Tree");renderSpawnChips()});
+  $("#mapFilterBtn").addEventListener("click",()=>{$("#mapFilters").hidden=!$("#mapFilters").hidden});
+  const shell=$("#mapShell"),refit=()=>requestAnimationFrame(()=>M.map&&M.map.invalidateSize());
+  const closeFull=()=>{shell.classList.remove("map-fullscreen");document.body.style.overflow="";$("#mapFullscreenBtn").textContent="Full screen";refit()};
+  $("#mapFullscreenBtn").addEventListener("click",()=>{if(shell.classList.contains("map-fullscreen"))return closeFull();shell.classList.add("map-fullscreen");document.body.style.overflow="hidden";$("#mapFullscreenBtn").textContent="Exit full screen";refit()});
+  $("#mapFullscreenClose").addEventListener("click",closeFull);
+  window.addEventListener("keydown",e=>{if(e.key==="Escape"&&shell.classList.contains("map-fullscreen"))closeFull()});
+  const add=()=>addSpawnPal($("#spawnPalSearch").value).catch(e=>spawnStatus("Could not load spawn data: "+e.message));
+  $("#addSpawnBtn").addEventListener("click",add);
+  $("#spawnPalSearch").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();add()}});
+  $("#clearSpawnBtn").addEventListener("click",clearSpawns);
+  $("#drawer").addEventListener("click",e=>{const b=e.target.closest(".pal-habitat-btn");if(!b)return;$("#palDialog").close();switchTab("map");addSpawnPal(b.dataset.pal,{replace:true}).catch(err=>spawnStatus("Could not load spawn data: "+err.message))});
+}
 
 function switchTab(id){
   document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
   document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id===id));
   if(id==="passives")renderPassives();
-  if(id==="map")ensureMap().catch(e=>{$("#mapLoading").hidden=false;$("#mapLoading").innerHTML="<div class=\"notice error\">Could not load map data: "+esc(e.message)+"</div>"});
+  if(id==="map")ensureMap().catch(e=>{console.error(e);mapNote("Map could not start: "+e.message,"bad")});
 }
 document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
 ["search","elementFilter","mountFilter","workFilter","sort"].forEach(id=>$("#"+id).addEventListener(id==="search"?"input":"change",()=>renderPals()));
@@ -820,12 +1046,7 @@ $("#palDialog").addEventListener("click",e=>{if(e.target===$("#palDialog"))$("#p
 $("#breedPairBtn").addEventListener("click",()=>pairLookup().catch(e=>$("#pairResult").innerHTML=`<div class="notice error">${esc(e.message)}</div>`));
 $("#targetBreedBtn").addEventListener("click",()=>targetLookup().catch(e=>$("#targetResult").innerHTML=`<div class="notice error">${esc(e.message)}</div>`));
 $("#passiveSearch").addEventListener("input",renderPassives);
-$("#showHabitatBtn").addEventListener("click",()=>showPalHabitat($("#habitatPalSearch").value.trim()).catch(e=>$("#habitatStatus").textContent=e.message));
-$("#clearHabitatBtn").addEventListener("click",clearHabitat);
-["habitatDay","habitatNight"].forEach(id=>$("#"+id).addEventListener("change",renderHabitatOverlay));
-$("#drawer").addEventListener("click",e=>{const b=e.target.closest(".pal-habitat-btn");if(!b)return;$("#palDialog").close();switchTab("map");setTimeout(()=>showPalHabitat(b.dataset.pal).catch(err=>$("#habitatStatus").textContent=err.message),0)});
-populateHabitatNames();
-initMapEvents();
+initMapUI();
 loadCore();
 })();
 </script>
