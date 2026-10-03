@@ -1,8 +1,49 @@
 # Palpedia+
 
-**Palpedia+** is an unofficial, expanded and searchable encyclopedia for **Palworld**, designed to provide substantially more practical information than the standard in-game Paldeck.
+![Palpedia+ Pal browser](docs/screenshots/pals.png)
 
-## Use Palpedia+
+**Palpedia+** is an unofficial, searchable encyclopedia for **Palworld** with far more practical detail than the in-game Paldeck: stats, a build calculator, breeding lookups, an interactive spawn map, an item library and passive skills, all in a single HTML file.
+
+**[Open Palpedia+ online](https://cjbtester1.github.io/palpedia-plus/)** · [Download the single-file edition](https://raw.githubusercontent.com/CJBTester1/palpedia-plus/main/palpedia-plus.html) · [Latest release](https://github.com/CJBTester1/palpedia-plus/releases/latest)
+
+## At a glance
+
+| | |
+|---|---|
+| **Pals** – search and filter ~300 Pals by element, mount and work suitability | **Map** – spawn zones for up to six Pals, with Day / Night filters |
+| **Breeding** – offspring lookup and parent-combination finder | **Items** – recipes, drop sources and ranch producers |
+| **Calculator** – level, potential, condensation, Souls and passives | **Passives** – searchable library with tiers and effects |
+
+## Screenshots
+
+### Pal profiles and stat calculator
+Each Pal opens a full profile: core stats, condensation effects, an individual build calculator, work suitability, Partner Skill, movement, locations, breeding and skills.
+
+![Pal profile with stat calculator](docs/screenshots/profile.png)
+
+### Interactive spawn map
+Search Pals by name and see each one's wild spawn zones as a coloured cloud on the Main Map or World Tree, with in-game marker icons.
+
+![Interactive map with Pal spawn zones](docs/screenshots/map.png)
+
+### Breeding lookup
+Pick two parents to find the offspring, or pick a target Pal to list the parent combinations that produce it. Results use the current 1.0.5 pair table.
+
+![Breeding lookup](docs/screenshots/breeding.png)
+
+### Item library
+Browse materials, food, weapons, armor and more. Each item shows its crafting recipe, which Pals drop or farm it, and what it is used to craft.
+
+![Item detail with recipe](docs/screenshots/items.png)
+
+### Passive skills
+A searchable passive skill database with effect, tier, category and breedability.
+
+![Passive skill library](docs/screenshots/passives.png)
+
+> Screenshots were captured from the live app. Pal and item artwork is loaded at runtime from third-party sources and may appear as letter placeholders when those sources are unreachable.
+
+## Using Palpedia+
 
 **You do not need to clone or download this repository to use Palpedia+.**
 
@@ -80,6 +121,10 @@ The breeding section provides two lookup modes:
 2. Select a target Pal to find parent combinations capable of producing it.
 
 The app is designed to use the current breeding pair table, including gender-specific outcomes where supplied by the source data.
+
+### Item library
+
+A searchable item database covering materials, food, weapons, armor and accessories. Each entry shows the description, crafting station and ingredients, Pals that drop or farm the item, and the items it is used to craft. Pal names link to their profiles.
 
 ### Passive Skill library
 
