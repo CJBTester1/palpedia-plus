@@ -34,14 +34,16 @@ Pick two parents to find the offspring, or pick a target Pal to list the parent 
 ### Item library
 Browse materials, food, weapons, armor and more. Each item shows its crafting recipe, which Pals drop or farm it, and what it is used to craft.
 
-![Item detail with recipe](docs/screenshots/items.png)
+![Item library](docs/screenshots/items.png)
+
+![Item detail with recipe](docs/screenshots/item-detail.png)
 
 ### Passive skills
 A searchable passive skill database with effect, tier, category and breedability.
 
 ![Passive skill library](docs/screenshots/passives.png)
 
-> Screenshots were captured from the live app. Pal and item artwork is loaded at runtime from third-party sources and may appear as letter placeholders when those sources are unreachable.
+> Screenshots were captured from the live app. Pal and item artwork is the official Palworld imagery, loaded at runtime from third-party sources (not bundled in this repository); if those sources are unreachable the app shows letter placeholders instead.
 
 ## Using Palpedia+
 
