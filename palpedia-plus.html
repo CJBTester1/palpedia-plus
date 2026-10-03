@@ -1,0 +1,534 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b1220"><title>Palpedia+ — Palworld PS5 1.0.5</title>
+<style>:root{color-scheme:dark;--bg:#08111f;--panel:#101b2e;--panel2:#15233a;--text:#edf4ff;--muted:#9bb0c8;--line:#263a57;--accent:#58d7ff;--accent2:#7cf0b3;--warn:#ffd166;--danger:#ff748c;--chip:#1b2b45;--shadow:0 12px 30px rgba(0,0,0,.28)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#07101d,#0b1525 28%,#08111f);color:var(--text);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}a{color:var(--accent)}.app{max-width:1180px;margin:auto;padding:0 14px 42px}.top{padding:18px 2px 10px}.brand{display:flex;gap:12px;align-items:center;min-width:0}.logo{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#55d7ff,#6ce6a2);display:grid;place-items:center;color:#07101d;font-weight:900;font-size:23px;box-shadow:var(--shadow)}h1{font-size:clamp(24px,7vw,38px);line-height:1.05;margin:0}.sub{color:var(--muted);margin:5px 0 0}.status{margin-top:12px;padding:10px 12px;border:1px solid var(--line);background:rgba(16,27,46,.84);border-radius:12px;display:flex;gap:8px;align-items:flex-start}.dot{width:9px;height:9px;margin-top:6px;border-radius:50%;background:var(--warn);flex:0 0 auto}.dot.ok{background:var(--accent2)}.dot.bad{background:var(--danger)}nav{display:flex;gap:8px;overflow:auto;padding:8px 0 12px;scrollbar-width:none;position:sticky;top:0;z-index:20;background:linear-gradient(var(--bg) 65%,rgba(8,17,31,.92))}nav::-webkit-scrollbar{display:none}.tab{min-height:44px;border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--text);padding:0 16px;white-space:nowrap}.tab.active{background:var(--accent);color:#06101c;border-color:var(--accent);font-weight:800}.section{display:none}.section.active{display:block}.controls{display:grid;grid-template-columns:1fr;gap:9px;margin:4px 0 14px}.search,.select,.num{width:100%;min-height:46px;border-radius:11px;border:1px solid var(--line);background:#0d1829;color:var(--text);padding:0 12px;outline:none}.search:focus,.select:focus,.num:focus,button:focus-visible{outline:3px solid rgba(88,215,255,.35);outline-offset:2px}.filter-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.meta-line{display:flex;justify-content:space-between;gap:10px;align-items:center;color:var(--muted);font-size:13px;margin:0 2px 10px}.grid{display:grid;grid-template-columns:1fr;gap:10px}.card{border:1px solid var(--line);background:linear-gradient(160deg,var(--panel),#0d1828);border-radius:15px;padding:12px;display:grid;grid-template-columns:74px minmax(0,1fr);gap:12px;text-align:left;color:inherit;width:100%;box-shadow:0 4px 14px rgba(0,0,0,.13)}.card:active{transform:scale(.995)}.pal-img,.img-fallback{width:74px;height:74px;border-radius:13px;background:#0a1423;border:1px solid #29405f;object-fit:contain}.img-fallback{display:grid;place-items:center;font-size:22px;font-weight:900;color:var(--muted)}.card-main{min-width:0}.card-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}.name{font-size:18px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.no{font-size:12px;color:var(--muted);white-space:nowrap}.chips{display:flex;flex-wrap:wrap;gap:5px;margin:7px 0}.chip{display:inline-flex;align-items:center;min-height:24px;padding:2px 8px;border-radius:999px;background:var(--chip);border:1px solid #2a4263;font-size:12px}.stats-mini{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:12px}.stats-mini b{color:var(--text)}.empty{padding:32px 15px;text-align:center;border:1px dashed var(--line);border-radius:14px;color:var(--muted)}.loadmore{width:100%;min-height:46px;margin-top:12px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-weight:700}.panel{border:1px solid var(--line);background:var(--panel);border-radius:15px;padding:14px;margin-bottom:12px}.panel h2,.panel h3{margin:0 0 10px}.panel h2{font-size:20px}.panel h3{font-size:16px}.two{display:grid;grid-template-columns:1fr;gap:10px}.breed-result{margin-top:12px;min-height:52px}.result-card{padding:12px;border-radius:12px;border:1px solid #345272;background:#0c192c}.small{font-size:12px;color:var(--muted)}.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kpi{background:#0c1728;border:1px solid var(--line);border-radius:11px;padding:10px;text-align:center;min-width:0}.kpi strong{display:block;font-size:19px}.kpi span{font-size:11px;color:var(--muted)}.list{display:grid;gap:7px}.row{border:1px solid var(--line);border-radius:11px;padding:10px;background:#0d1829}.row strong{display:block}.row .small{margin-top:2px}dialog{width:min(760px,100%);max-width:none;height:100%;max-height:none;margin:0 0 0 auto;border:0;border-left:1px solid var(--line);background:#08111f;color:var(--text);padding:0}dialog::backdrop{background:rgba(0,0,0,.68)}.drawer-head{position:sticky;top:0;z-index:8;display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(8,17,31,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}.close{width:44px;height:44px;border-radius:12px;background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:22px}.drawer-title{min-width:0}.drawer-title strong{font-size:19px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.drawer-title span{color:var(--muted);font-size:12px}.drawer{padding:14px 14px 46px}.hero{display:grid;grid-template-columns:108px minmax(0,1fr);gap:14px;align-items:center;margin-bottom:14px}.hero .pal-img,.hero .img-fallback{width:108px;height:108px}.hero-name{font-size:28px;font-weight:900;line-height:1.05;margin-bottom:7px}.hr{height:1px;background:var(--line);margin:13px 0}.stat-table{width:100%;border-collapse:collapse;font-size:13px}.stat-table th,.stat-table td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right}.stat-table th:first-child,.stat-table td:first-child{text-align:left}.badge{padding:2px 7px;border-radius:999px;border:1px solid #365273;color:var(--muted);font-size:11px}.work{display:flex;flex-wrap:wrap;gap:6px}.coord{font-variant-numeric:tabular-nums;color:var(--accent2);font-weight:700}.skill-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start}.skill-row b{display:block}.skill-num{text-align:right;color:var(--muted);font-size:12px}.notice{padding:10px 12px;border-radius:11px;background:#10233b;border:1px solid #2c4d70;color:#bfd2e8;font-size:12px}.warning{background:#2a2210;border-color:#594816;color:#f0d68a}.error{background:#2b1118;border-color:#632637;color:#ffacbd}.source-list{display:grid;gap:10px}.source-list a{word-break:break-word}.passive{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.tier{font-weight:850;color:var(--warn)}.build-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.build-grid .wide{grid-column:1/-1}.star-picker{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.star-btn{width:46px;height:42px;border:1px solid var(--line);border-radius:10px;background:#0d1829;color:var(--muted);font-size:22px}.star-btn.on{color:var(--warn);border-color:#806b28;background:#2a2210}.toggle-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.toggle-row label{display:flex;gap:6px;align-items:center}.mod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.mod{border:1px solid var(--line);border-radius:11px;padding:9px;background:#0c1728}.mod label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}.breakdown{font-size:12px;color:var(--muted);line-height:1.6}.work-edit{display:grid;grid-template-columns:minmax(0,1fr) 86px;gap:8px;align-items:center}@media(min-width:640px){.build-grid{grid-template-columns:repeat(4,1fr)}.mod-grid{grid-template-columns:repeat(4,1fr)}}.map-shell{position:relative;border:1px solid var(--line);border-radius:15px;overflow:hidden;background:#050b13;box-shadow:var(--shadow)}.map-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px;background:#0d1829;border-bottom:1px solid var(--line)}.map-btn{min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);padding:0 12px;font-weight:700}.map-btn.active{background:var(--accent);color:#06101c;border-color:var(--accent)}.map-viewport{height:min(70vh,720px);min-height:430px;position:relative;overflow:hidden;touch-action:none;cursor:grab;background:#02060b}.map-viewport.dragging{cursor:grabbing}.map-stage{position:absolute;left:0;top:0;width:8192px;height:8192px;transform-origin:0 0;will-change:transform}.map-tile{position:absolute;width:512px;height:512px;display:block;user-select:none;pointer-events:none}.map-marker{position:absolute;width:30px;height:30px;transform:translate(-50%,-50%);border:0;padding:0;background:transparent;z-index:4}.map-marker img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 1px 2px #000) drop-shadow(0 0 2px #000)}.fallback-pin{width:18px;height:18px;border-radius:50%;background:var(--accent);border:2px solid white;box-shadow:0 1px 4px #000}.map-pop{position:absolute;z-index:8;min-width:190px;max-width:280px;background:rgba(8,17,31,.96);border:1px solid #456487;border-radius:11px;padding:9px 11px;box-shadow:var(--shadow);pointer-events:none}.map-pop b{display:block}.map-pop .coord{font-size:12px}.map-filter-panel{position:absolute;z-index:10;top:10px;right:10px;width:min(310px,calc(100% - 20px));max-height:calc(100% - 20px);overflow:auto;background:rgba(8,17,31,.97);border:1px solid var(--line);border-radius:13px;padding:11px;box-shadow:var(--shadow)}.map-filter-row{display:flex;align-items:center;gap:9px;padding:7px 4px;border-bottom:1px solid rgba(38,58,87,.6)}.map-filter-row:last-child{border-bottom:0}.map-filter-row img{width:25px;height:25px;object-fit:contain}.map-filter-row label{flex:1}.map-count{color:var(--muted);font-size:11px}.map-zoom{position:absolute;z-index:9;left:10px;bottom:10px;display:grid;gap:6px}.map-zoom button{width:42px;height:42px;border-radius:10px;border:1px solid var(--line);background:rgba(8,17,31,.94);color:var(--text);font-size:22px}.map-coords{position:absolute;z-index:9;right:10px;bottom:10px;background:rgba(8,17,31,.88);border:1px solid var(--line);border-radius:9px;padding:5px 8px;font-size:11px;color:var(--muted)}.map-loading{position:absolute;z-index:7;inset:0;display:grid;place-items:center;background:#050b13;color:var(--muted)}.map-fullscreen{position:fixed!important;inset:0!important;z-index:1000!important;border-radius:0!important;border:0!important}.map-fullscreen .map-viewport{height:calc(100dvh - 61px);min-height:0}.map-close-full{display:none}.map-fullscreen .map-close-full{display:inline-flex;align-items:center;justify-content:center;width:42px;padding:0;font-size:23px;margin-left:auto}@media(max-width:600px){.map-toolbar{gap:6px}.map-btn{padding:0 9px}.map-viewport{min-height:58vh}.map-marker{width:27px;height:27px}}footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}@media(min-width:640px){.controls{grid-template-columns:2fr 3fr}.filter-grid{grid-template-columns:repeat(4,1fr)}.grid{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr 1fr}}@media(min-width:960px){.grid{grid-template-columns:repeat(3,1fr)}dialog{width:min(800px,72vw)}}</style>
+</head><body><div class="app" id="app"><header class="top"><div class="brand"><div class="logo" aria-hidden="true">P+</div><div><h1>Palpedia+</h1><p class="sub">Expanded Palworld encyclopedia · PS5 · current target patch <b>v1.0.5</b></p></div></div><div class="status" id="status" role="status" aria-live="polite"><span class="dot" id="statusDot"></span><div><b id="statusTitle">Loading current Pal data…</b><div class="small" id="statusText">Core data is loaded live so the guide is not frozen to an old Early Access table.</div></div></div></header><nav aria-label="Palpedia sections"><button class="tab active" data-tab="pals" type="button">Pals</button><button class="tab" data-tab="map" type="button">Map</button><button class="tab" data-tab="breeding" type="button">Breeding</button><button class="tab" data-tab="passives" type="button">Passives</button><button class="tab" data-tab="sources" type="button">Sources & methodology</button></nav><main><section class="section active" id="pals"><div class="controls"><input class="search" id="search" type="search" placeholder="Search Pal, element, drop, Partner Skill…" autocomplete="off" aria-label="Search Pals"><div class="filter-grid"><select class="select" id="elementFilter" aria-label="Filter by element"><option value="">All elements</option></select><select class="select" id="mountFilter" aria-label="Filter by mount"><option value="">All mounts</option><option value="flying">Flying</option><option value="ground">Ground</option><option value="swim">Water</option><option value="none">Not mountable</option></select><select class="select" id="workFilter" aria-label="Filter by work suitability"><option value="">All work</option></select><select class="select" id="sort" aria-label="Sort Pals"><option value="number">Paldeck #</option><option value="name">Name</option><option value="attack">Attack</option><option value="defense">Defense</option><option value="hp">HP</option><option value="speed">Ride sprint</option></select></div></div><div class="meta-line"><span id="resultCount">Loading…</span><span id="dataStamp"></span></div><div class="grid" id="palGrid" aria-live="polite"></div><button class="loadmore" id="loadMore" type="button" hidden>Show more</button></section><section class="section" id="map"><div class="panel"><h2>Interactive Palworld map</h2><p class="small">Explore the Main Map and separate World Tree map. Drag to pan, scroll or use ± to zoom, tap markers for coordinates, and filter marker categories.</p><div class="filters" style="margin-top:10px"><div><label for="habitatPalSearch">Pal habitat</label><input class="input" id="habitatPalSearch" list="habitatPalNames" placeholder="Search a Pal"><datalist id="habitatPalNames"></datalist></div><div><label>Habitat time</label><div style="display:flex;gap:12px;padding:10px 0"><label><input type="checkbox" id="habitatDay" checked> Day</label><label><input type="checkbox" id="habitatNight" checked> Night</label></div></div><button class="loadmore" id="showHabitatBtn" type="button">Show habitat</button><button class="map-btn" id="clearHabitatBtn" type="button">Clear</button></div><div id="habitatStatus" class="small">Search for a Pal to overlay its regular wild habitat.</div></div><div class="map-shell" id="mapShell"><div class="map-toolbar"><button class="map-btn active" id="mainMapBtn" type="button">Main Map</button><button class="map-btn" id="treeMapBtn" type="button">World Tree</button><button class="map-btn" id="mapFilterBtn" type="button">Filters</button><button class="map-btn" id="mapFullscreenBtn" type="button">Full screen</button><button class="map-btn map-close-full" id="mapFullscreenClose" type="button" aria-label="Close full screen">×</button></div><div class="map-viewport" id="mapViewport" aria-label="Interactive Palworld map"><div class="map-stage" id="mapStage"></div><div class="map-loading" id="mapLoading">Open the Map tab to load map data.</div><div class="map-filter-panel" id="mapFilters" hidden></div><div class="map-zoom"><button id="mapZoomIn" type="button" aria-label="Zoom in">+</button><button id="mapZoomOut" type="button" aria-label="Zoom out">−</button></div><div class="map-coords" id="mapCoords">X — · Y —</div></div></div><p class="small" style="margin-top:8px">Map terrain, marker coordinates and Palworld UI icons are loaded at runtime from the GPL-3.0 palworld-save-pal project. Palworld-derived imagery remains property of Pocketpair. Palpedia+ does not bundle these game assets in this repository.</p></section><section class="section" id="breeding"><div class="panel"><h2>Exact breeding lookup</h2><p class="small">Uses the current 1.0.5 pair table rather than the pre-1.0 breeding formula. Gender-specific outcomes are respected.</p><div class="two"><div><label for="parentA">Parent A</label><input class="search" id="parentA" list="palNames" placeholder="e.g. Shadowbeak"></div><div><label for="parentB">Parent B</label><input class="search" id="parentB" list="palNames" placeholder="e.g. Frostallion Noct"></div></div><button class="loadmore" id="breedPairBtn" type="button">Find offspring</button><div class="breed-result" id="pairResult"></div></div><div class="panel"><h2>How do I breed a specific Pal?</h2><label for="targetBreed">Target Pal</label><input class="search" id="targetBreed" list="palNames" placeholder="e.g. Eidrolon"><button class="loadmore" id="targetBreedBtn" type="button">Show parent combinations</button><div class="breed-result" id="targetResult"></div></div><datalist id="palNames"></datalist></section><section class="section" id="passives"><div class="panel"><h2>Passive Skill library</h2><p class="small">Search current passive effects, tiers and whether the source dataset marks them as breedable.</p><input class="search" id="passiveSearch" type="search" placeholder="Search passive or effect…"></div><div class="list" id="passiveList"><div class="empty">Open this tab to load the passive library.</div></div></section><section class="section" id="sources"><div class="panel"><h2>What this guide considers “current”</h2><div class="notice"><b>Target: Palworld PS5 v1.0.5.</b> The v1.0.5 patch was a small bug-fix update. The structured 1.0 Pal tables used here remain applicable because the current table-diff source reports no v1.0.5 changes to Pal stats, drops, Partner Skills, items or recipes.</div><div class="hr"></div><p><b>Roster accounting:</b> the game/marketing count and data-file count differ. The app loads every record exposed by the current structured dataset, including variants/collaboration forms. Astralym is separately marked by source data as a Paldeck-only story boss and not obtainable.</p><p><b>Coordinates:</b> Alpha strings use exact coordinates when supplied. Regular habitat coordinates are approximate region-marker centres, not invented spawn points or region boundaries.</p><p><b>Build calculator:</b> Potential is modelled separately for HP, Attack and Defense (0–100 talent = 0–30% level-scaling bonus). Condensation applies +5% HP/Attack/Defense per star, Souls provide 20 × 3% enhancement levels per stat, passive stat bonuses stack additively within their bonus category, and ordinary Alpha status applies the documented 1.2× HP scaling. Known legendary Alpha HP scaling exceptions are handled separately. Awakening is modelled as separate additive HP/Attack/Defense components from current v1.0 game-verified extraction evidence, rather than as a blanket percentage. Trust uses per-species Friendship_Stat values loaded from the current palworld-save-pal game-data extraction and is added before level/Potential scaling and later permanent multipliers.</p><p><b>Skill recommendations:</b> “recommended” skills are an explainable efficiency heuristic, not an official tier list. Natural skills are ranked mainly by power/cooldown with same-element skills used as a tie-breaker; where community-measured boss DPS exists, the measurement is displayed separately.</p></div><div class="panel source-list"><h2>Primary sources</h2><div><b>Pocketpair / Steam official patch notes</b><br><a href="https://steamcommunity.com/app/1623730/allnews/" target="_blank" rel="noopener">steamcommunity.com/app/1623730/allnews/</a></div><div><b>PalDB version/update history</b><br><a href="https://paldb.cc/en/Version" target="_blank" rel="noopener">paldb.cc/en/Version</a></div><div><b>Palworld KB structured 1.0 dataset</b> — stats, Partner Skills, work, drops, regions, Alpha coordinates, skills, passives.<br><a href="https://github.com/beliarance/palworld-kb" target="_blank" rel="noopener">github.com/beliarance/palworld-kb</a></div><div><b>palworld-save-pal extracted game data</b> — species-specific Friendship/Trust parameters used by the build calculator.<br><a href="https://github.com/oMaN-Rod/palworld-save-pal" target="_blank" rel="noopener">github.com/oMaN-Rod/palworld-save-pal</a></div><div><b>PalworldBreeding.gg current methodology</b> — v1.0.5 game-file extraction, 44,850 parent pairs, gender-aware outcomes.<br><a href="https://palworldbreeding.gg/methodology" target="_blank" rel="noopener">palworldbreeding.gg/methodology</a></div><div><b>Palworld Wiki / condensation mechanics</b><br><a href="https://palworld.wiki.gg/wiki/Condensation" target="_blank" rel="noopener">palworld.wiki.gg/wiki/Condensation</a></div></div></section></main><footer>Palpedia+ is an unofficial reference. Palworld and all game names/assets belong to Pocketpair and their respective rights holders.</footer></div><dialog id="palDialog" aria-labelledby="drawerName"><div class="drawer-head"><button class="close" id="closeDialog" type="button" aria-label="Close">×</button><div class="drawer-title"><strong id="drawerName">Pal</strong><span id="drawerSub"></span></div></div><div class="drawer" id="drawer"></div></dialog>
+
+<script>
+(() => {
+"use strict";
+const URLS = {
+  index: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/index.json",
+  regions: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/regions.json",
+  icons: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/icons.json",
+  palLocations: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/pal_locations.json",
+  skills: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/active_skills.json",
+  passives: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/passives.json",
+  dps: "https://raw.githubusercontent.com/beliarance/palworld-kb/main/data/skill_dps_meta.json",
+  breedingPrimary: "https://palworldbreeding.gg/breeding-chart.csv",
+  breedingFallback: "https://raw.githubusercontent.com/JohnnyDalvi/Palworld_Smart_Breeder/main/data/breeding/breeding_pairs.csv",
+  trustPals: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json/pals.json",
+  trustNames: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json/l10n/en/pals.json",
+  mapData: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json/",
+  mapTiles: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/psp-ui/static/maps/",
+  mapAssets: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/psp-ui/src/lib/assets/img/",
+  habitatDistribution: "https://paldb.cc/DataTable/UI/DT_PaldexDistributionData.json"
+};
+const state = {pals:[], palMap:new Map(), regions:{}, locationDetails:{}, iconUrls:new Map(), active:null, passives:null, dps:null, breeding:null, breedingByChild:null, trustByName:null, mapLoaded:false, mapArea:"MainMap", mapLayers:{}, mapHidden:new Set(), habitatDistribution:null, habitatPal:null, habitatRow:null, mapScale:1, mapX:0, mapY:0, visible:48, filtered:[], iconIds:new Map()};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+const norm = s => String(s ?? "").trim().toLowerCase();
+const fmt = n => Number.isFinite(Number(n)) ? Number(n).toLocaleString() : "—";
+const unique = a => [...new Set(a.filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
+const status = (title,text,kind="") => {
+  $("#statusTitle").textContent=title; $("#statusText").textContent=text;
+  $("#statusDot").className="dot"+(kind?(" "+kind):"");
+};
+async function getJSON(url){
+  const r=await fetch(url,{cache:"no-store"});
+  if(!r.ok) throw new Error("HTTP "+r.status+" for "+url);
+  return r.json();
+}
+function imageMarkup(name,size=""){
+  const direct=state.iconUrls.get(name);
+  const id=state.iconIds.get(name);
+  const src=direct || (id?`https://paldb.gg/pal/${encodeURIComponent(id)}.webp`:"");
+  const initials=esc(name.split(/\s+/).map(x=>x[0]).join("").slice(0,2));
+  if(!src) return `<div class="img-fallback">${initials}</div>`;
+  return `<img class="pal-img" loading="lazy" src="${esc(src)}" alt="${esc(name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="img-fallback" style="display:none">${initials}</div>`;
+}
+function palSearchBlob(p){
+  return [p.name,p.number,...(p.elements||[]),Object.keys(p.work||{}),p.partner_skill,p.partner_effect,...(p.drops||[]),...(p.regions||[]),...(p.alpha||[])].join(" ").toLowerCase();
+}
+async function loadCore(){
+  try{
+    const [idx,reg,icons,loc]=await Promise.all([getJSON(URLS.index),getJSON(URLS.regions),getJSON(URLS.icons),getJSON(URLS.palLocations)]);
+    state.regions=reg.regions||{};
+    state.locationDetails=loc.pals||{};
+    state.iconUrls=new Map(Object.entries(icons.pals||{}));
+    state.pals=Object.entries(idx.pals||{}).map(([name,p])=>({name,...p,_search:""}));
+    state.pals.forEach(p=>p._search=palSearchBlob(p));
+    state.palMap=new Map(state.pals.map(p=>[norm(p.name),p]));
+    populateFilters();
+    populateNames();
+    renderPals();
+    $("#dataStamp").textContent=`Core dataset ${idx.updated||"1.0"}`;
+    status("Current Palpedia data loaded",`${state.pals.length} data records available. Detailed skills and breeding load only when needed to keep mobile startup lighter.`,"ok");
+  }catch(e){
+    console.error(e);
+    status("Could not load live Pal data","Check your internet connection, then reload this HTML file. The guide intentionally does not fall back to stale embedded Pal tables.","bad");
+    $("#palGrid").innerHTML=`<div class="empty">Live dataset failed to load.<br><span class="small">${esc(e.message)}</span></div>`;
+  }
+}
+function populateFilters(){
+  const elements=unique(state.pals.flatMap(p=>p.elements||[]));
+  $("#elementFilter").insertAdjacentHTML("beforeend",elements.map(x=>`<option>${esc(x)}</option>`).join(""));
+  const work=unique(state.pals.flatMap(p=>Object.keys(p.work||{})));
+  $("#workFilter").insertAdjacentHTML("beforeend",work.map(x=>`<option>${esc(x.replaceAll("_"," "))}</option>`).join(""));
+  [...$("#workFilter").options].forEach(o=>{if(o.value)o.value=o.textContent.replaceAll(" ","_")});
+}
+function populateNames(){
+  $("#palNames").innerHTML=state.pals.map(p=>`<option value="${esc(p.name)}"></option>`).join("");
+}
+function sortPals(arr,mode){
+  const cp=[...arr];
+  if(mode==="name") return cp.sort((a,b)=>a.name.localeCompare(b.name));
+  if(mode==="attack") return cp.sort((a,b)=>(b.atk||0)-(a.atk||0)||a.name.localeCompare(b.name));
+  if(mode==="defense") return cp.sort((a,b)=>(b.def||0)-(a.def||0)||a.name.localeCompare(b.name));
+  if(mode==="hp") return cp.sort((a,b)=>(b.hp||0)-(a.hp||0)||a.name.localeCompare(b.name));
+  if(mode==="speed") return cp.sort((a,b)=>(b.sprint||0)-(a.sprint||0)||a.name.localeCompare(b.name));
+  return cp.sort((a,b)=>{
+    const parse=v=>{const m=String(v||"9999").match(/^(\d+)/);return m?+m[1]:9999};
+    return parse(a.number)-parse(b.number)||String(a.number).localeCompare(String(b.number))||a.name.localeCompare(b.name)
+  });
+}
+function renderPals(reset=true){
+  if(reset) state.visible=48;
+  const q=norm($("#search").value), el=$("#elementFilter").value, mount=$("#mountFilter").value, work=$("#workFilter").value;
+  let arr=state.pals.filter(p=>{
+    if(q&&!p._search.includes(q))return false;
+    if(el&&!(p.elements||[]).includes(el))return false;
+    const pm=p.mount||"none";
+    if(mount&&pm!==mount)return false;
+    if(work&&!Object.prototype.hasOwnProperty.call(p.work||{},work))return false;
+    return true;
+  });
+  arr=sortPals(arr,$("#sort").value);
+  state.filtered=arr;
+  const shown=arr.slice(0,state.visible);
+  $("#resultCount").textContent=`${arr.length} Pal${arr.length===1?"":"s"}`;
+  $("#palGrid").innerHTML=shown.length?shown.map(card).join(""):`<div class="empty">No Pals match those filters.</div>`;
+  $("#loadMore").hidden=state.visible>=arr.length;
+  document.querySelectorAll("[data-pal]").forEach(b=>b.addEventListener("click",()=>openPal(b.dataset.pal)));
+}
+function card(p){
+  const elems=(p.elements||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("");
+  const work=Object.entries(p.work||{}).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k,v])=>`${k.replaceAll("_"," ")} ${v}`).join(" · ");
+  return `<button type="button" class="card" data-pal="${esc(p.name)}">
+    <div>${imageMarkup(p.name)}</div>
+    <div class="card-main">
+      <div class="card-top"><div class="name">${esc(p.name)}</div><div class="no">#${esc(p.number||"—")}</div></div>
+      <div class="chips">${elems||`<span class="chip">Typeless</span>`}</div>
+      <div class="stats-mini"><span>HP <b>${fmt(p.hp)}</b></span><span>ATK <b>${fmt(p.atk)}</b></span><span>DEF <b>${fmt(p.def)}</b></span>${p.sprint?`<span>SPD <b>${fmt(p.sprint)}</b></span>`:""}</div>
+      ${work?`<div class="small" style="margin-top:5px">${esc(work)}</div>`:""}
+    </div></button>`;
+}
+function regionCoord(label){
+  const clean=String(label).replace(/\s*\[.*?\]\s*/g,"").trim();
+  const v=state.regions[label]||state.regions[clean];
+  return Array.isArray(v)?`(${v[0]}, ${v[1]})`:null;
+}
+function parseAlpha(s){
+  const m=String(s).match(/\((-?\d+)\s*,\s*(-?\d+)\)/);
+  return m?`(${m[1]}, ${m[2]})`:null;
+}
+function starCoefficient(v,stars){return Math.round((Number(v)||0)*(1+stars*.05)*10)/10}
+const KNOWN_ALPHA_HP_SCALE={"frostallion":3,"frostallion noct":3,"jetragon":3,"paladius":2,"necromus":2};
+async function ensureTrustData(){
+  if(state.trustByName)return;
+  const [raw,names]=await Promise.all([getJSON(URLS.trustPals),getJSON(URLS.trustNames)]);
+  const map=new Map();
+  for(const [id,v] of Object.entries(raw||{})){
+    const display=names?.[id]?.localized_name;
+    if(!display)continue;
+    map.set(norm(display),{
+      hp:Number(v.friendship_hp)||0,
+      atk:Number(v.friendship_shotattack)||0,
+      def:Number(v.friendship_defense)||0,
+      work:Number(v.friendship_craftspeed)||0,
+      id
+    });
+  }
+  state.trustByName=map;
+}
+function trustStatsFor(p){return state.trustByName?.get(norm(p.name))||{hp:0,atk:0,def:0,work:0,id:""}}
+function passiveMods(selected){
+  const out={hp:0,atk:0,def:0,work:0,move:0,stamina:0,element:[]};
+  for(const name of [...new Set(selected.filter(Boolean))]){
+    const x=(state.passives?.passives||[]).find(v=>v.name===name);if(!x)continue;
+    const e=String(x.effects||"");
+    const grab=(re,key)=>{const m=e.match(re);if(m)out[key]+=Number(m[1])||0};
+    grab(/(?:Max Health|\bHP)\s*([+-]\d+(?:\.\d+)?)%/i,"hp");
+    grab(/Attack\s*([+-]\d+(?:\.\d+)?)%/i,"atk");
+    grab(/Defense\s*([+-]\d+(?:\.\d+)?)%/i,"def");
+    grab(/Work Speed\s*([+-]\d+(?:\.\d+)?)%/i,"work");
+    grab(/Movement Speed(?: increases| increased)?\s*([+-]?\d+(?:\.\d+)?)%/i,"move");
+    grab(/Max Stamina\s*([+-]\d+(?:\.\d+)?)%/i,"stamina");
+    const em=[...e.matchAll(/(\d+(?:\.\d+)?)% increase in ([A-Za-z]+) attack damage/gi)];
+    em.forEach(m=>out.element.push(`${m[2]} +${m[1]}%`));
+  }
+  return out;
+}
+function palBuildStats(p,o){
+  const L=Math.max(1,Math.min(80,+o.level||1)),stars=Math.max(0,Math.min(4,+o.stars||0));
+  const iv=k=>Math.max(0,Math.min(100,+o[k]||0))*.003;
+  const soul=k=>Math.max(0,Math.min(20,+o[k]||0))*.03;
+  const cb=stars*.05, cond=1+cb, pm=passiveMods(o.passives||[]);
+  const alphaScale=o.alpha?(KNOWN_ALPHA_HP_SCALE[norm(p.name)]||1.2):1;
+  const trust=trustStatsFor(p), tr=Math.max(0,Math.min(10,+o.trust||0));
+  const hpScale=(+p.hp||0)*alphaScale + trust.hp*tr;
+  const atkScale=(+p.atk||0) + trust.atk*tr;
+  const defScale=(+p.def||0) + trust.def*tr;
+
+  // Palworld truncates the unmodified panel stat before permanent multipliers.
+  const raw={
+    hp:Math.floor(500+5*L+hpScale*.5*L*(1+iv("hpPot"))),
+    atk:Math.floor(100+atkScale*.075*L*(1+iv("atkPot"))),
+    def:Math.floor(50+defScale*.075*L*(1+iv("defPot")))
+  };
+  const condensed={
+    hp:Math.floor(raw.hp*cond),
+    atk:Math.floor(raw.atk*cond),
+    def:Math.floor(raw.def*cond)
+  };
+
+  // v1.0 Awakening is an additive stat component, not a blanket percentage.
+  // Current game-verified extraction models these contributions from species scaling.
+  const awake=o.awakened?{
+    hp:Math.floor((+p.hp||0)*alphaScale*L*.065*cond),
+    atk:Math.floor((+p.atk||0)*L*(1+iv("atkPot"))*.009),
+    def:Math.floor((+p.def||0)*L*(1+iv("defPot"))*.009)
+  }:{hp:0,atk:0,def:0};
+
+  const subtotal={
+    hp:condensed.hp+awake.hp,
+    atk:condensed.atk+awake.atk,
+    def:condensed.def+awake.def
+  };
+  return {
+    hp:Math.floor(subtotal.hp*(1+soul("hpSoul"))*(1+pm.hp/100)),
+    atk:Math.floor(subtotal.atk*(1+soul("atkSoul"))*(1+pm.atk/100)),
+    def:Math.floor(subtotal.def*(1+soul("defSoul"))*(1+pm.def/100)),
+    raw,condensed,awake,subtotal,pm,cond,cb,alphaScale,L,stars,trust,tr
+  };
+}
+function condensationWorkBonuses(p,stars){
+  const entries=Object.entries(p.work||{}).filter(([,v])=>(+v||0)>0);
+  const bonus=Object.fromEntries(entries.map(([k])=>[k,0]));
+  if(!entries.length||stars<=0)return bonus;
+  // Current 1.0 rule: ranks 1–3 improve successive work roles; rank 4 adds +1 to every existing role.
+  // Ties follow the source object's stable work order, which mirrors the structured Pal dataset.
+  const ranked=[...entries].sort((a,b)=>(+b[1]||0)-(+a[1]||0));
+  for(let i=0;i<Math.min(stars,3,ranked.length);i++)bonus[ranked[i][0]]++;
+  if(stars>=4)for(const [k] of entries)bonus[k]++;
+  return bonus;
+}
+function workSuitabilityHTML(p,stars,books={}){
+  const entries=Object.entries(p.work||{}).filter(([,v])=>(+v||0)>0).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length)return '<div class="small">No work suitability.</div>';
+  const cb=condensationWorkBonuses(p,stars);
+  return entries.map(([k,v])=>{
+    const base=Math.min(10,(+v||0)+(cb[k]||0));
+    const book=Math.max(0,Math.min(9,+books[k]||0));
+    const final=Math.min(10,base+book);
+    return `<div class="work-edit"><span>${esc(k.replaceAll("_"," "))}: ${v}${cb[k]?` +${cb[k]} condensation`:""}${book?` +${book} book${book===1?"":"s"}`:""} → <b>${final}</b></span><select class="select book-level" data-work="${esc(k)}"><option value="0">No book</option>${[1,2,3,4,5,6,7,8,9].filter(n=>base+n<=10).map(n=>`<option value="${n}" ${book===n?"selected":""}>+${n} book${n===1?"":"s"}</option>`).join("")}</select></div>`;
+  }).join("");
+}
+function buildOptionsFromUI(){
+  return {
+    level:+$("#calcLevel").value,stars:+($("#buildCalc")?.dataset.stars||0),
+    hpPot:+$("#hpPot").value,atkPot:+$("#atkPot").value,defPot:+$("#defPot").value,
+    hpSoul:+$("#hpSoul").value,atkSoul:+$("#atkSoul").value,defSoul:+$("#defSoul").value,workSoul:+$("#workSoul").value,
+    alpha:$("#alphaToggle").checked,awakened:$("#awakeToggle").checked,
+    trust:+$("#trustLevel").value,
+    passives:[0,1,2,3].map(i=>$("#passive"+i)?.value||""),
+    books:window.__palpediaBooks||{}
+  };
+}
+function renderCalculator(p){
+  const soulOpts=Array.from({length:21},(_,i)=>`<option value="${i}">${i} · +${i*3}%</option>`).join("");
+  return `<div id="buildCalc" data-stars="0">
+    <div class="notice"><b>Individual Pal build simulator</b><br>Potential is three separate genetic values (0–100). Souls use their real 20 enhancement levels (+3% each). Calculated modifiers are kept separate instead of being merged into one arbitrary percentage.</div>
+    <div class="build-grid" style="margin-top:10px">
+      <div><label for="calcLevel">Level</label><input class="num" id="calcLevel" type="number" min="1" max="80" value="60"></div>
+      <div><label>Condensation</label><div class="star-picker" id="starPicker">${[1,2,3,4].map(n=>`<button type="button" class="star-btn" data-star="${n}" aria-label="${n} stars">★</button>`).join("")}</div></div>
+      <div class="wide toggle-row"><label><input id="alphaToggle" type="checkbox"> Alpha Pal</label><label><input id="awakeToggle" type="checkbox"> Awakened</label></div>
+    </div>
+    <div class="hr"></div><h3>Potential / IV</h3>
+    <div class="mod-grid">${[["hpPot","HP"],["atkPot","Attack"],["defPot","Defense"]].map(([id,n])=>`<div class="mod"><label for="${id}">${n} Potential (0–100)</label><input class="num" id="${id}" type="number" min="0" max="100" value="0"><div class="small">100 = +30% to level scaling</div></div>`).join("")}</div>
+    <div class="hr"></div><h3>Pal Soul enhancement</h3>
+    <div class="mod-grid">${[["hpSoul","HP"],["atkSoul","Attack"],["defSoul","Defense"],["workSoul","Work Speed"]].map(([id,n])=>`<div class="mod"><label for="${id}">${n}</label><select class="select" id="${id}">${soulOpts}</select></div>`).join("")}</div>
+    <div class="hr"></div><h3>Passive Skills</h3>
+    <div class="two">${[0,1,2,3].map(i=>`<select class="select passive-build" id="passive${i}"><option value="">Passive ${i+1}: none</option></select>`).join("")}</div>
+    <div class="hr"></div><h3>Trust</h3>
+    <select class="select" id="trustLevel">${Array.from({length:11},(_,i)=>`<option value="${i}">Trust Lv.${i}</option>`).join("")}</select>
+    <div class="notice" id="trustInfo" style="margin-top:8px">Loading species-specific Friendship stats…</div>
+    <div class="hr"></div><h3>Calculated combat stats</h3><div id="actualStats"></div>
+    <div class="hr"></div><h3>Work Suitability & Applied Technique books</h3><div id="workBuild"></div>
+    <div class="hr"></div><h3>Other calculated modifiers</h3><div id="otherMods"></div>
+    <div class="small" style="margin-top:10px">Combat stats use the documented two-stage truncation model. Awakening is calculated as a separate additive v1.0 stat component rather than a flat percentage. Partner Skill-specific buffs, food and temporary party/base buffs are not folded into combat stats.</div>
+  </div>`;
+}
+function actualStatsTable(p,o){
+  const v=palBuildStats(p,o), ps=v.pm;
+  const trustNote=o.trust? ` · Trust Lv.${o.trust}: +${fmt(v.trust.hp*o.trust)} HP / +${fmt(v.trust.atk*o.trust)} ATK / +${fmt(v.trust.def*o.trust)} DEF species scaling`:"";
+  return `<div class="kpi-grid"><div class="kpi"><strong>${fmt(v.hp)}</strong><span>HP</span></div><div class="kpi"><strong>${fmt(v.atk)}</strong><span>Attack</span></div><div class="kpi"><strong>${fmt(v.def)}</strong><span>Defense</span></div></div>
+  <div class="breakdown" style="margin-top:8px">Level ${v.L} · Potential HP/ATK/DEF ${o.hpPot}/${o.atkPot}/${o.defPot} · Condensation +${v.stars*5}% · Souls HP/ATK/DEF +${o.hpSoul*3}/+${o.atkSoul*3}/+${o.defSoul*3}% · Passives HP/ATK/DEF ${ps.hp>=0?"+":""}${ps.hp}%/${ps.atk>=0?"+":""}${ps.atk}%/${ps.def>=0?"+":""}${ps.def}%${o.alpha?` · Alpha HP scaling ×${v.alphaScale}`:""}${o.awakened?` · Awakening +${v.awake.hp}/+${v.awake.atk}/+${v.awake.def} HP/ATK/DEF`:""}${trustNote}</div>`;
+}
+function buildLocations(p){
+  const reg=(p.regions||[]).map(r=>{
+    const c=regionCoord(r);
+    return `<div class="row"><strong>${esc(r)}</strong><div class="small">${c?`Approx. region marker <span class="coord">${esc(c)}</span>`:"No verified coordinate in structured region source"}</div></div>`;
+  }).join("");
+  const al=(p.alpha||[]).map(a=>{
+    const c=parseAlpha(a);
+    return `<div class="row"><strong>Alpha / boss</strong><div>${esc(a)}</div>${c?`<div class="small">Exact listed coordinate: <span class="coord">${esc(c)}</span></div>`:""}</div>`;
+  }).join("");
+  const via=(p.get_via||[]).map(x=>`<div class="row">${esc(x)}</div>`).join("");
+  return `${reg}${al}${via}`||`<div class="empty">No catch-location data is listed for this Pal. It may be breeding-, raid-, story- or event-only.</div>`;
+}
+async function ensureSkills(){
+  if(state.active)return;
+  const [a,d]=await Promise.all([getJSON(URLS.skills),getJSON(URLS.dps).catch(()=>({skills:[]}))]);
+  state.active=a;state.dps=d;
+}
+async function ensurePassives(){
+  if(state.passives)return;
+  state.passives=await getJSON(URLS.passives);
+}
+function skillScore(s,p){
+  if(!s)return -1;
+  const base=(Number(s.power)||0)/Math.max(1,Number(s.cooldown_seconds)||1);
+  const same=(p.elements||[]).includes(s.element)?0.01:0;
+  return base+same;
+}
+async function skillsHTML(p){
+  await ensureSkills();
+  const byName=new Map((state.active.skills||[]).map(s=>[s.name,s]));
+  const learn=(state.active.learnsets?.[p.name]||[]).map(x=>({...x,detail:byName.get(x.skill)}));
+  const measured=new Map((state.dps?.skills||[]).map(s=>[s.skill,s]));
+  const ranked=learn.filter(x=>x.detail&&(x.detail.power||0)>0).sort((a,b)=>skillScore(b.detail,p)-skillScore(a.detail,p));
+  const top=ranked.slice(0,3);
+  const best=`<div class="notice"><b>Recommended natural skills</b><br>${top.length?top.map(x=>{
+    const m=measured.get(x.skill);
+    return `${esc(x.skill)}${m?` · measured boss DPS ${fmt(m.dps_large)}`:""}`;
+  }).join("<br>"):"No damaging natural skills available in the current learnset source."}<br><span class="small">Recommendation = power/cooldown efficiency with same-element used as a tie-breaker. It does not model every animation, hitbox or status interaction.</span></div>`;
+  const rows=learn.map(x=>{
+    const s=x.detail||{}; const m=measured.get(x.skill);
+    return `<div class="row skill-row"><div><b>${esc(x.skill)}</b><span class="small">Lv. ${fmt(x.level)} · ${esc(s.element||"—")} · ${esc(s.range||"")}${s.skill_fruit_exists?" · Skill Fruit exists":""}</span>${s.description?`<div class="small">${esc(s.description)}</div>`:""}${m?`<div class="small">Community measurement: ${fmt(m.dps_small)} DPS small target / ${fmt(m.dps_large)} DPS large target${m.multi_hit?" · multi-hit":""}</div>`:""}</div><div class="skill-num">PWR ${fmt(s.power)}<br>CD ${fmt(s.cooldown_seconds)}s</div></div>`;
+  }).join("");
+  const fruit=(state.active.skills||[]).filter(s=>s.skill_fruit_exists&&(p.elements||[]).includes(s.element)&&(s.power||0)>0).sort((a,b)=>skillScore(b,p)-skillScore(a,p)).slice(0,4);
+  return `${best}<div class="hr"></div><h3>Natural learnset</h3><div class="list">${rows||`<div class="empty">No learnset rows in source.</div>`}</div><div class="hr"></div><h3>Same-element Skill Fruit candidates</h3><div class="list">${fruit.map(s=>`<div class="row skill-row"><div><b>${esc(s.name)}</b><span class="small">${esc(s.element)} · ${esc(s.range||"")}</span></div><div class="skill-num">PWR ${fmt(s.power)}<br>CD ${fmt(s.cooldown_seconds)}s</div></div>`).join("")||`<div class="small">No same-element Skill Fruit candidates in the current skill table.</div>`}</div>`;
+}
+async function passiveRecommendationsHTML(p){
+  await ensurePassives();
+  const maxWork=Math.max(0,...Object.values(p.work||{}).map(Number));
+  const arr=(state.passives.passives||[]).filter(x=>x.breedable===true&&x.tier>=3);
+  const keywords=p.mount?["Movement Speed","Stamina","Attack"]:["Attack","Defense","Max Health"];
+  let picks=arr.filter(x=>keywords.some(k=>String(x.effects).includes(k)));
+  if(maxWork>=5)picks=picks.concat(arr.filter(x=>x.category==="work"&&String(x.effects).includes("Work Speed")));
+  picks=[...new Map(picks.map(x=>[x.name,x])).values()].sort((a,b)=>b.tier-a.tier).slice(0,8);
+  return `<div class="notice"><b>Role-based passive candidates</b><br><span class="small">These are high-tier breedable passives matched to this Pal's combat/mount/work role. This is guidance, not a claim that one fixed four-passive set is optimal for every build.</span></div><div class="list" style="margin-top:10px">${picks.map(x=>`<div class="row passive"><div><strong>${esc(x.name)}</strong><div class="small">${esc(x.effects)}</div></div><div class="tier">T${fmt(x.tier)}</div></div>`).join("")||`<div class="small">No role-matched passives found.</div>`}</div>`;
+}
+async function openPal(name){
+  const p=state.palMap.get(norm(name));if(!p)return;
+  $("#drawerName").textContent=p.name;$("#drawerSub").textContent=`Paldeck #${p.number||"—"} · ${p.rarity||"Unknown rarity"}`;
+  const elem=(p.elements||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("")||`<span class="chip">Typeless</span>`;
+  const work=Object.entries(p.work||{}).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<span class="chip">${esc(k.replaceAll("_"," "))} ${fmt(v)}</span>`).join("");
+
+  $("#drawer").innerHTML=`
+    <div class="hero"><div>${imageMarkup(p.name)}</div><div><div class="hero-name">${esc(p.name)}</div><div class="chips">${elem}</div><div class="small">${esc(p.rarity||"")} ${p.size?`· Size ${esc(p.size)}`:""} ${p.nocturnal?"· Nocturnal":""}</div></div></div>
+    <div class="panel"><h3>Core stats</h3><div class="kpi-grid"><div class="kpi"><strong>${fmt(p.hp)}</strong><span>Base HP coeff.</span></div><div class="kpi"><strong>${fmt(p.atk)}</strong><span>Base Attack</span></div><div class="kpi"><strong>${fmt(p.def)}</strong><span>Base Defense</span></div></div>
+      <div class="hr"></div><h3>Condensation</h3>
+      <div class="notice">Condensation does not change the species HP/Attack/Defense coefficients shown above. It applies a +5% combat-stat multiplier per star (up to +20%), upgrades the Partner Skill each rank, and changes Work Suitability separately.</div>
+      <div class="hr"></div><h3>Pal Build Calculator</h3>${renderCalculator(p)}
+    </div>
+    <div class="panel"><h3>Partner Skill</h3><b>${esc(p.partner_skill||"None listed")}</b><p>${esc(p.partner_effect||"No effect text in source.")}</p></div>
+    <div class="panel"><h3>Movement & mount</h3><div class="kpi-grid"><div class="kpi"><strong>${esc(p.mount||"—")}</strong><span>Mount type</span></div><div class="kpi"><strong>${fmt(p.sprint)}</strong><span>Ride sprint</span></div><div class="kpi"><strong>${fmt(p.run)}</strong><span>Run speed</span></div></div></div>
+    <div class="panel"><h3>Work suitability</h3><div class="work">${work||`<span class="small">No base work suitability.</span>`}</div>${(p.ranch_produce||[]).length?`<div class="hr"></div><b>Ranch production</b><div class="chips">${p.ranch_produce.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>`:""}</div>
+    <div class="panel"><h3>Drops</h3><div class="chips">${(p.drops||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("")||`<span class="small">No drops listed.</span>`}</div></div>
+    <div class="panel"><h3>Where to catch / obtain</h3><div class="notice">Regular wild regions: ${esc((p.regions||[]).join(", ")||"No regular wild habitat listed.")}. Region coordinates below are approximate centres; the interactive habitat map uses Paldeck distribution data. ${ (p.regions||[]).length ? `<button class="loadmore pal-habitat-btn" data-pal="${esc(p.name)}" type="button" style="margin-top:8px">Show ${esc(p.name)} habitat on map</button>` : "" }</div><div class="chips" style="margin-top:10px"><span class="chip">Wild spawn: ${esc(state.locationDetails[p.name]?.day_night||"not specified")}</span>${(p.eggs||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div><div class="list" style="margin-top:10px">${buildLocations(p)}</div></div>
+    <div class="panel"><h3>Abilities & recommended skills</h3><div id="skillsSlot"><div class="small">Loading current learnset…</div></div></div>
+    <div class="panel"><h3>Recommended passive candidates</h3><div id="passiveSlot"><div class="small">Loading current passive table…</div></div></div>
+    <div class="panel"><h3>How to breed ${esc(p.name)}</h3><button class="loadmore" id="loadBreedForPal" type="button">Load exact parent combinations</button><div id="palBreedSlot"></div></div>`;
+  window.__palpediaBooks={};
+  $("#palDialog").showModal();
+  const updateCalc=()=>{
+    const o=buildOptionsFromUI();
+    $("#actualStats").innerHTML=actualStatsTable(p,o);
+    $("#workBuild").innerHTML=workSuitabilityHTML(p,o.stars,o.books);
+    document.querySelectorAll(".book-level").forEach(s=>s.addEventListener("change",()=>{
+      window.__palpediaBooks=window.__palpediaBooks||{};
+      window.__palpediaBooks[s.dataset.work]=+s.value||0;
+      updateCalc();
+    }));
+    const pm=passiveMods(o.passives);
+    const workEffective=((1+pm.work/100)*(1+Math.max(0,Math.min(20,o.workSoul))*0.03)-1)*100;
+    $("#otherMods").innerHTML=`<div class="chips"><span class="chip">Work Speed modifier: ${workEffective>=0?"+":""}${Math.round(workEffective*10)/10}%</span><span class="chip">Movement: ${pm.move>=0?"+":""}${pm.move}%</span><span class="chip">Stamina: ${pm.stamina>=0?"+":""}${pm.stamina}%</span>${pm.element.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div><div class="small">Work Speed combines the passive modifier class and Soul modifier class multiplicatively. Work Suitability level is a separate system.</div>`;
+  };
+  Promise.all([ensurePassives(),ensureTrustData()]).then(()=>{
+    const opts=(state.passives.passives||[]).slice().sort((a,b)=>a.name.localeCompare(b.name)).map(x=>`<option value="${esc(x.name)}">${esc(x.name)} — ${esc(x.effects)}</option>`).join("");
+    document.querySelectorAll(".passive-build").forEach((s,i)=>{s.insertAdjacentHTML("beforeend",opts);s.addEventListener("change",()=>{const chosen=new Set([...document.querySelectorAll(".passive-build")].map(x=>x.value).filter(Boolean));document.querySelectorAll(".passive-build").forEach(sel=>[...sel.options].forEach(op=>{op.disabled=!!op.value&&chosen.has(op.value)&&sel.value!==op.value}));updateCalc()})});
+    const t=trustStatsFor(p), ti=$("#trustInfo");
+    if(ti)ti.innerHTML=`<b>${esc(p.name)} Friendship stats per Trust rank</b><br>HP +${fmt(t.hp)} · Attack +${fmt(t.atk)} · Defense +${fmt(t.def)}${t.work?` · Work/Craft +${fmt(t.work)}`:""}<br><span class="small">Trust is added to the species stat before level/Potential scaling and later permanent multipliers. At Trust Lv.10 these additions are ten times the values shown.</span>`;
+    updateCalc();
+  }).catch(e=>{console.error(e);const ti=$("#trustInfo");if(ti)ti.innerHTML=`<span class="error">Trust dataset unavailable: ${esc(e.message)}. Trust is temporarily treated as 0.</span>`;updateCalc()});
+  ["calcLevel","hpPot","atkPot","defPot"].forEach(id=>$("#"+id).addEventListener("input",updateCalc));
+  ["hpSoul","atkSoul","defSoul","workSoul","trustLevel","alphaToggle","awakeToggle"].forEach(id=>$("#"+id).addEventListener("change",updateCalc));
+  document.querySelectorAll(".star-btn").forEach(b=>b.addEventListener("click",()=>{
+    const n=+b.dataset.star,cur=+$("#buildCalc").dataset.stars||0,next=cur===n?0:n;
+    $("#buildCalc").dataset.stars=next;
+    document.querySelectorAll(".star-btn").forEach(x=>x.classList.toggle("on",+x.dataset.star<=next));
+    updateCalc();
+  }));
+  updateCalc();
+  $("#loadBreedForPal").addEventListener("click",async()=>{$("#palBreedSlot").innerHTML=`<div class="small">Loading 1.0.5 breeding table…</div>`;await ensureBreeding();$("#palBreedSlot").innerHTML=targetBreedingHTML(p.name)});
+  Promise.all([skillsHTML(p),passiveRecommendationsHTML(p)]).then(([s,pa])=>{
+    const ss=$("#skillsSlot"),ps=$("#passiveSlot");if(ss)ss.innerHTML=s;if(ps)ps.innerHTML=pa;
+  }).catch(e=>{console.error(e);const ss=$("#skillsSlot");if(ss)ss.innerHTML=`<div class="notice error">Could not load skill/passive detail: ${esc(e.message)}</div>`});
+}
+function parseCSV(text){
+  const rows=[];let row=[],field="",q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){
+      if(c==='"'&&text[i+1]==='"'){field+='"';i++}
+      else if(c==='"')q=false;else field+=c;
+    }else{
+      if(c==='"')q=true;
+      else if(c===','){row.push(field);field=""}
+      else if(c==='\n'){row.push(field);rows.push(row);row=[];field=""}
+      else if(c!=='\r')field+=c;
+    }
+  }
+  if(field||row.length){row.push(field);rows.push(row)}
+  const h=rows.shift()||[];
+  return rows.filter(r=>r.length>=h.length).map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]||""])));
+}
+async function ensureBreeding(){
+  if(state.breeding)return;
+  status("Loading exact breeding table","About 44,850 parent pairs are being loaded on demand. This is intentionally deferred for mobile performance.");
+  let text=null,source="";
+  try{
+    const r=await fetch(URLS.breedingPrimary,{cache:"no-store"});
+    if(!r.ok)throw new Error("primary HTTP "+r.status);
+    text=await r.text();source="PalworldBreeding.gg v1.0.5";
+  }catch(e){
+    const r=await fetch(URLS.breedingFallback,{cache:"no-store"});
+    if(!r.ok)throw new Error("Breeding sources unavailable");
+    text=await r.text();source="GitHub 1.0 breeding export fallback";
+  }
+  state.breeding=parseCSV(text);
+  state.breedingByChild=new Map();
+  for(const r of state.breeding){
+    const child=r.child||r.offspring||r.result||"";
+    if(child){
+      const k=norm(child);if(!state.breedingByChild.has(k))state.breedingByChild.set(k,[]);
+      state.breedingByChild.get(k).push(r);
+    }
+    const pairs=[[r.parent_a,r.parent_a_id],[r.parent_b,r.parent_b_id],[child,r.child_id]];
+    for(const [n,id] of pairs)if(n&&id&&!state.iconIds.has(n))state.iconIds.set(n,id);
+  }
+  status("Current breeding table loaded",`${state.breeding.length.toLocaleString()} parent-pair outcomes loaded from ${source}.`,"ok");
+  renderPals(false);
+}
+function rowVal(r,...keys){for(const k of keys)if(r[k])return r[k];return ""}
+function genderTxt(g){return g&&g!=="any"?` (${g})`:""}
+function targetBreedingHTML(name){
+  const rows=state.breedingByChild?.get(norm(name))||[];
+  if(!rows.length)return `<div class="empty">No parent combination found in the loaded exact table. This may be a self-only, story-only, raid-only or unobtainable Pal.</div>`;
+  const sorted=[...rows].sort((a,b)=>String(rowVal(a,"via")).localeCompare(String(rowVal(b,"via"))));
+  const max=80, shown=sorted.slice(0,max);
+  return `<div class="small" style="margin:10px 0">${rows.length.toLocaleString()} exact combination${rows.length===1?"":"s"} found${rows.length>max?`; showing first ${max}`:""}.</div><div class="list">${shown.map(r=>{
+    const a=rowVal(r,"parent_a","parent1"),b=rowVal(r,"parent_b","parent2"),ga=rowVal(r,"parent_a_gender"),gb=rowVal(r,"parent_b_gender"),via=rowVal(r,"via");
+    return `<div class="row"><strong>${esc(a)}${esc(genderTxt(ga))} + ${esc(b)}${esc(genderTxt(gb))}</strong>${via?`<div class="small">${esc(via)}</div>`:""}</div>`;
+  }).join("")}</div>`;
+}
+async function pairLookup(){
+  const a=$("#parentA").value.trim(),b=$("#parentB").value.trim();
+  if(!a||!b){$("#pairResult").innerHTML=`<div class="notice warning">Enter both parents.</div>`;return}
+  $("#pairResult").innerHTML=`<div class="small">Loading exact breeding table…</div>`;await ensureBreeding();
+  const matches=state.breeding.filter(r=>{
+    const ra=rowVal(r,"parent_a","parent1"),rb=rowVal(r,"parent_b","parent2");
+    return (norm(ra)===norm(a)&&norm(rb)===norm(b))||(norm(ra)===norm(b)&&norm(rb)===norm(a));
+  });
+  if(!matches.length){$("#pairResult").innerHTML=`<div class="empty">No exact match for those parent names.</div>`;return}
+  $("#pairResult").innerHTML=matches.map(r=>`<div class="result-card"><b>${esc(rowVal(r,"child","offspring","result"))}</b><div class="small">${esc(rowVal(r,"parent_a"))}${esc(genderTxt(rowVal(r,"parent_a_gender")))} + ${esc(rowVal(r,"parent_b"))}${esc(genderTxt(rowVal(r,"parent_b_gender")))}${rowVal(r,"via")?` · ${esc(rowVal(r,"via"))}`:""}</div></div>`).join("");
+}
+async function targetLookup(){
+  const n=$("#targetBreed").value.trim();if(!n){$("#targetResult").innerHTML=`<div class="notice warning">Enter a target Pal.</div>`;return}
+  $("#targetResult").innerHTML=`<div class="small">Loading exact breeding table…</div>`;await ensureBreeding();$("#targetResult").innerHTML=targetBreedingHTML(n);
+}
+async function renderPassives(){
+  const box=$("#passiveList");
+  if(!state.passives){box.innerHTML=`<div class="empty">Loading current passive table…</div>`;try{await ensurePassives()}catch(e){box.innerHTML=`<div class="notice error">${esc(e.message)}</div>`;return}}
+  const q=norm($("#passiveSearch").value);
+  const arr=(state.passives.passives||[]).filter(x=>!q||norm([x.name,x.effects,x.category].join(" ")).includes(q)).sort((a,b)=>b.tier-a.tier||a.name.localeCompare(b.name));
+  box.innerHTML=arr.map(x=>`<div class="row passive"><div><strong>${esc(x.name)}</strong><div class="small">${esc(x.effects)}</div><div class="small">${esc(x.category||"")} ${x.breedable===true?"· breedable":x.breedable===false?"· not breedable":""} ${x.world_tree_set?"· World Tree":""}</div></div><div class="tier">T${fmt(x.tier)}</div></div>`).join("")||`<div class="empty">No passives match.</div>`;
+}
+
+
+function populateHabitatNames(){const d=$("#habitatPalNames");if(d)d.innerHTML=state.pals.filter(p=>(p.regions||[]).length).map(p=>'<option value="'+esc(p.name)+'"></option>').join("")}
+async function ensureHabitatDistribution(){if(state.habitatDistribution)return state.habitatDistribution;$("#habitatStatus").textContent="Loading Paldeck habitat data…";const raw=await getJSON(URLS.habitatDistribution),rows=Array.isArray(raw)?raw[0]?.Rows:raw?.Rows;if(!rows)throw new Error("Habitat data unavailable.");state.habitatDistribution=rows;return rows}
+async function showPalHabitat(name){const p=state.palMap.get(norm(name));if(!p)throw new Error("Choose a Pal from the list.");await ensureMap();await ensureTrustData();const id=state.trustByName?.get(norm(p.name))?.id;if(!id)throw new Error("No species ID for "+p.name);const rows=await ensureHabitatDistribution(),row=rows[id]||Object.entries(rows).find(([k])=>k.toLowerCase()===id.toLowerCase())?.[1];if(!row)throw new Error("No regular wild habitat for "+p.name);state.habitatPal=p.name;state.habitatRow=row;$("#habitatPalSearch").value=p.name;const loc=k=>(row[k]?.Locations||row[k]?.locations||[]),all=loc("dayTimeLocations").concat(loc("nightTimeLocations"));state.mapArea=all.some(q=>mapAreaFor(+q.X,+q.Y)==="MainMap")?"MainMap":"Tree";renderMap(true)}
+function renderHabitatOverlay(){$("#mapStage").querySelector(".habitat-svg")?.remove();const row=state.habitatRow;if(!row)return;const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");svg.classList.add("habitat-svg");svg.setAttribute("viewBox","0 0 8192 8192");svg.style.cssText="position:absolute;inset:0;width:8192px;height:8192px;z-index:3;pointer-events:none";let count=0;for(const [key,on,fill] of [["dayTimeLocations",$("#habitatDay").checked,"rgba(255,145,35,.34)"],["nightTimeLocations",$("#habitatNight").checked,"rgba(104,78,255,.34)"]]){if(!on)continue;const o=row[key]||{},rad=Number(o.Radius||o.radius||2500),a=MAP_AREAS[state.mapArea],cm=(a.maxX-a.minX)/MAP_SIZE;for(const q of o.Locations||o.locations||[]){if(mapAreaFor(+q.X,+q.Y)!==state.mapArea)continue;const p=worldToMapPixel(+q.X,+q.Y),el=document.createElementNS("http://www.w3.org/2000/svg","circle");el.setAttribute("cx",p.x);el.setAttribute("cy",p.y);el.setAttribute("r",Math.max(5,rad/cm));el.setAttribute("fill",fill);svg.appendChild(el);count++}}$("#mapStage").appendChild(svg);$("#habitatStatus").innerHTML="<b>"+esc(state.habitatPal)+"</b> · "+count.toLocaleString()+" habitat points · orange day / violet night"}
+function clearHabitat(){state.habitatPal=null;state.habitatRow=null;$("#habitatPalSearch").value="";renderMap(false);$("#habitatStatus").textContent="Search for a Pal to overlay its regular wild habitat."}
+
+const MAP_SIZE=8192,MAP_TILE_SIZE=512,MAP_TILE_Z=4;
+const MAP_AREAS={MainMap:{dir:"mainmap",minX:-1099400,maxX:349400,minY:-724400,maxY:724400},Tree:{dir:"tree",minX:347351.5,maxX:689148.5,minY:-818197,maxY:-476400}};
+const MAP_CATS=[
+{id:"fast_travel",name:"Fast Travel",file:"fast_travel_points.json",icon:"t_icon_compass_fttower.webp",show:true,filter:x=>x.class!=="BP_LevelObject_UnlockMapPoint_C"},
+{id:"watchtower",name:"Watchtowers",file:"fast_travel_points.json",icon:"t_icon_compass_ftunlockmap.webp",show:true,filter:x=>x.class==="BP_LevelObject_UnlockMapPoint_C"},
+{id:"tower_boss",name:"Tower Bosses",file:"towers.json",icon:"t_icon_compass_tower.webp",show:true},
+{id:"dungeons",name:"Dungeons",file:"dungeons.json",icon:"t_icon_compass_dungeon.webp",show:false},
+{id:"effigies",name:"Effigies",file:"effigies.json",icon:"t_icon_compass_relic.webp",show:true},
+{id:"journals",name:"Journals / Notes",file:"notes.json",icon:"t_itemicon_consume_technologybook_g1.webp",show:false},
+{id:"skill_fruits",name:"Skill Fruit Trees",file:"skill_fruits.json",icon:"t_icon_compass_09.webp",show:false},
+{id:"ancient_ruins",name:"Ancient Ruins",file:"ancient_ruins.json",icon:"t_icon_ancient_tech_point.webp",show:false},
+{id:"alpha_pals",name:"Alpha Pals",file:"bosses.json",icon:"t_icon_compass_06.webp",show:true,filter:x=>x.spawn_type==="alpha"},
+{id:"predator_pals",name:"Predator Pals",file:"bosses.json",icon:"t_icon_compass_06.webp",show:false,filter:x=>x.spawn_type==="predator"},
+{id:"bounty",name:"Bounties",file:"bosses.json",icon:"t_icon_compass_bounty.webp",show:false,filter:x=>x.spawn_type==="bounty"},
+{id:"camps",name:"NPC Camps",file:"camps.json",icon:"t_icon_compass_camp.webp",show:false},
+{id:"eggs",name:"Egg Spawners",file:"eggs_spawners.json",icon:"t_icon_compass_10.webp",show:false,lazy:true}
+];
+function mapAreaFor(x,y){const t=MAP_AREAS.Tree;if(x>=t.minX&&x<=t.maxX&&y>=t.minY&&y<=t.maxY)return "Tree";const m=MAP_AREAS.MainMap;return x>=m.minX&&x<=m.maxX&&y>=m.minY&&y<=m.maxY?"MainMap":null}
+function worldToMapPixel(x,y,area=state.mapArea){const a=MAP_AREAS[area],cm=(a.maxX-a.minX)/MAP_SIZE;return{x:(y-a.minY)/cm,y:(x-a.minX)/cm}}
+function pixelToGame(px,py,area=state.mapArea){const a=MAP_AREAS[area],cm=(a.maxX-a.minX)/MAP_SIZE,wx=py*cm+a.minX,wy=px*cm+a.minY;return{x:Math.round((wy-157935)/459),y:Math.round((wx+123930)/459)}}
+function mapIconUrl(cat){return URLS.mapAssets+cat.icon}
+function normalizeMapRows(raw){return Array.isArray(raw)?raw:Object.entries(raw||{}).map(([key,v])=>Object.assign({_key:key},v))}
+function mapLabel(cat,row){if(["alpha_pals","predator_pals","bounty"].includes(cat.id)){const n=String(row.character_id||"").replace(/^BOSS_/i,"").replaceAll("_"," ");return(n&&n!=="None"?n:cat.name)+(row.level?" · Lv. "+row.level:"")}if(cat.id==="journals")return row._key||"Journal";if(cat.id==="fast_travel")return row.id||"Fast Travel";return cat.name.replace(/s$/,"")}
+async function loadMapCategory(cat){if(state.mapLayers[cat.id])return;const raw=await getJSON(URLS.mapData+cat.file);state.mapLayers[cat.id]=normalizeMapRows(raw).filter(x=>Number.isFinite(+x.x)&&Number.isFinite(+x.y)&&(!cat.filter||cat.filter(x)))}
+async function ensureMap(){if(state.mapLoaded)return;$("#mapLoading").textContent="Loading current Palworld map markers…";await Promise.all(MAP_CATS.filter(x=>!x.lazy).map(loadMapCategory));state.mapLoaded=true;state.mapHidden=new Set(MAP_CATS.filter(x=>!x.show).map(x=>x.id));renderMapFilters();renderMap(true);$("#mapLoading").hidden=true}
+function renderMapTiles(){const stage=$("#mapStage"),a=MAP_AREAS[state.mapArea],frag=document.createDocumentFragment();for(let x=0;x<16;x++)for(let y=0;y<16;y++){const img=document.createElement("img");img.className="map-tile";img.alt="";img.loading="lazy";img.draggable=false;img.style.left=x*MAP_TILE_SIZE+"px";img.style.top=y*MAP_TILE_SIZE+"px";img.src=URLS.mapTiles+a.dir+"/"+MAP_TILE_Z+"/"+x+"/"+y+".webp";frag.appendChild(img)}stage.replaceChildren(frag)}
+function renderMapMarkers(){const stage=$("#mapStage"),frag=document.createDocumentFragment();for(const cat of MAP_CATS){if(state.mapHidden.has(cat.id))continue;for(const row of state.mapLayers[cat.id]||[]){if(mapAreaFor(+row.x,+row.y)!==state.mapArea)continue;const p=worldToMapPixel(+row.x,+row.y),b=document.createElement("button");b.type="button";b.className="map-marker";b.style.left=p.x+"px";b.style.top=p.y+"px";b.title=mapLabel(cat,row);const im=document.createElement("img");im.src=mapIconUrl(cat);im.alt="";im.onerror=()=>{im.remove();const d=document.createElement("div");d.className="fallback-pin";b.appendChild(d)};b.appendChild(im);b.addEventListener("click",e=>{e.stopPropagation();showMapPopup(b,cat,row)});frag.appendChild(b)}}stage.appendChild(frag)}
+function showMapPopup(marker,cat,row){document.querySelector(".map-pop")?.remove();const p=worldToMapPixel(+row.x,+row.y),g=pixelToGame(p.x,p.y),pop=document.createElement("div");pop.className="map-pop";pop.style.left=Math.min(MAP_SIZE-300,p.x+18)+"px";pop.style.top=Math.max(10,p.y-20)+"px";pop.innerHTML="<b>"+esc(mapLabel(cat,row))+"</b><div class=small>"+esc(cat.name)+"</div><div class=coord>X "+g.x+" · Y "+g.y+"</div>";$("#mapStage").appendChild(pop)}
+function applyMapTransform(){$("#mapStage").style.transform="translate("+state.mapX+"px,"+state.mapY+"px) scale("+state.mapScale+")"}
+function fitMap(){const v=$("#mapViewport"),s=Math.min(v.clientWidth/MAP_SIZE,v.clientHeight/MAP_SIZE);state.mapScale=Math.max(.055,s);state.mapX=(v.clientWidth-MAP_SIZE*state.mapScale)/2;state.mapY=(v.clientHeight-MAP_SIZE*state.mapScale)/2;applyMapTransform()}
+function zoomMap(factor,cx,cy){const v=$("#mapViewport"),x=cx??v.clientWidth/2,y=cy??v.clientHeight/2,old=state.mapScale,next=Math.max(.045,Math.min(2.2,old*factor));if(next===old)return;const wx=(x-state.mapX)/old,wy=(y-state.mapY)/old;state.mapScale=next;state.mapX=x-wx*next;state.mapY=y-wy*next;applyMapTransform()}
+function renderMap(reset=false){renderMapTiles();renderMapMarkers();renderHabitatOverlay();$("#mainMapBtn").classList.toggle("active",state.mapArea==="MainMap");$("#treeMapBtn").classList.toggle("active",state.mapArea==="Tree");if(reset)requestAnimationFrame(fitMap);else applyMapTransform()}
+function renderMapFilters(){const box=$("#mapFilters");box.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><b>Map markers</b><button class="map-btn" id="mapAllToggle" type="button">Show all</button></div><div class="small" style="margin:5px 0 8px">Choose which marker types are visible.</div>'+MAP_CATS.map(cat=>'<div class="map-filter-row"><img src="'+mapIconUrl(cat)+'" alt=""><label><input type="checkbox" data-map-cat="'+cat.id+'" '+(state.mapHidden.has(cat.id)?"":"checked")+'> '+esc(cat.name)+'</label><span class="map-count">'+(state.mapLayers[cat.id]||[]).length.toLocaleString()+'</span></div>').join("");box.querySelectorAll("[data-map-cat]").forEach(x=>x.addEventListener("change",async()=>{const id=x.dataset.mapCat,cat=MAP_CATS.find(c=>c.id===id);if(x.checked){state.mapHidden.delete(id);if(cat.lazy&&!state.mapLayers[id]){x.disabled=true;await loadMapCategory(cat);x.disabled=false}}else state.mapHidden.add(id);renderMap(false);renderMapFilters()}));$("#mapAllToggle").addEventListener("click",async()=>{state.mapHidden.clear();await Promise.all(MAP_CATS.map(loadMapCategory));renderMap(false);renderMapFilters()})}
+function setMapArea(area){state.mapArea=area;document.querySelector(".map-pop")?.remove();renderMap(true)}
+function initMapEvents(){const v=$("#mapViewport");let drag=false,lx=0,ly=0;v.addEventListener("pointerdown",e=>{if(e.target.closest(".map-marker,.map-filter-panel,.map-zoom"))return;drag=true;lx=e.clientX;ly=e.clientY;v.setPointerCapture(e.pointerId);v.classList.add("dragging")});v.addEventListener("pointermove",e=>{if(drag){state.mapX+=e.clientX-lx;state.mapY+=e.clientY-ly;lx=e.clientX;ly=e.clientY;applyMapTransform()}const r=v.getBoundingClientRect(),px=(e.clientX-r.left-state.mapX)/state.mapScale,py=(e.clientY-r.top-state.mapY)/state.mapScale;if(px>=0&&px<=MAP_SIZE&&py>=0&&py<=MAP_SIZE){const g=pixelToGame(px,py);$("#mapCoords").textContent="X "+g.x+" · Y "+g.y}});const end=()=>{drag=false;v.classList.remove("dragging")};v.addEventListener("pointerup",end);v.addEventListener("pointercancel",end);v.addEventListener("wheel",e=>{e.preventDefault();const r=v.getBoundingClientRect();zoomMap(e.deltaY<0?1.22:.82,e.clientX-r.left,e.clientY-r.top)},{passive:false});v.addEventListener("click",e=>{if(!e.target.closest(".map-marker"))document.querySelector(".map-pop")?.remove()});$("#mapZoomIn").addEventListener("click",()=>zoomMap(1.3));$("#mapZoomOut").addEventListener("click",()=>zoomMap(.77));$("#mainMapBtn").addEventListener("click",()=>setMapArea("MainMap"));$("#treeMapBtn").addEventListener("click",()=>setMapArea("Tree"));$("#mapFilterBtn").addEventListener("click",()=>{$("#mapFilters").hidden=!$("#mapFilters").hidden});const shell=$("#mapShell"),closeFull=()=>{shell.classList.remove("map-fullscreen");document.body.style.overflow="";$("#mapFullscreenBtn").textContent="Full screen";requestAnimationFrame(fitMap)};$("#mapFullscreenBtn").addEventListener("click",()=>{shell.classList.add("map-fullscreen");document.body.style.overflow="hidden";$("#mapFullscreenBtn").textContent="Exit full screen";requestAnimationFrame(fitMap)});$("#mapFullscreenClose").addEventListener("click",closeFull);window.addEventListener("keydown",e=>{if(e.key==="Escape"&&shell.classList.contains("map-fullscreen"))closeFull()});window.addEventListener("resize",()=>{if($("#map").classList.contains("active"))fitMap()})}
+
+function switchTab(id){
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
+  document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id===id));
+  if(id==="passives")renderPassives();
+  if(id==="map")ensureMap().catch(e=>{$("#mapLoading").hidden=false;$("#mapLoading").innerHTML="<div class=\"notice error\">Could not load map data: "+esc(e.message)+"</div>"});
+}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
+["search","elementFilter","mountFilter","workFilter","sort"].forEach(id=>$("#"+id).addEventListener(id==="search"?"input":"change",()=>renderPals()));
+$("#loadMore").addEventListener("click",()=>{state.visible+=48;renderPals(false)});
+$("#closeDialog").addEventListener("click",()=>$("#palDialog").close());
+$("#palDialog").addEventListener("click",e=>{if(e.target===$("#palDialog"))$("#palDialog").close()});
+$("#breedPairBtn").addEventListener("click",()=>pairLookup().catch(e=>$("#pairResult").innerHTML=`<div class="notice error">${esc(e.message)}</div>`));
+$("#targetBreedBtn").addEventListener("click",()=>targetLookup().catch(e=>$("#targetResult").innerHTML=`<div class="notice error">${esc(e.message)}</div>`));
+$("#passiveSearch").addEventListener("input",renderPassives);
+$("#showHabitatBtn").addEventListener("click",()=>showPalHabitat($("#habitatPalSearch").value.trim()).catch(e=>$("#habitatStatus").textContent=e.message));
+$("#clearHabitatBtn").addEventListener("click",clearHabitat);
+["habitatDay","habitatNight"].forEach(id=>$("#"+id).addEventListener("change",renderHabitatOverlay));
+$("#drawer").addEventListener("click",e=>{const b=e.target.closest(".pal-habitat-btn");if(!b)return;$("#palDialog").close();switchTab("map");setTimeout(()=>showPalHabitat(b.dataset.pal).catch(err=>$("#habitatStatus").textContent=err.message),0)});
+populateHabitatNames();
+initMapEvents();
+loadCore();
+})();
+</script>
+</body></html>
