@@ -58,7 +58,8 @@ nav::-webkit-scrollbar{display:none}
 .panel h2{font-size:20px}.panel h3{font-size:16px}
 .two{display:grid;grid-template-columns:1fr;gap:10px}
 .breed-result{margin-top:12px;min-height:52px}
-.result-pal{display:flex;gap:12px;align-items:center}.result-pal .pal-img,.result-pal .img-fallback{width:56px;height:56px;flex:0 0 auto}
+.result-pal{display:flex;flex-direction:column;gap:8px;align-items:flex-start}.result-pal .pal-img,.result-pal .img-fallback{width:56px;height:56px;flex:0 0 auto}
+.pal-link{display:flex;gap:12px;align-items:center;background:none;border:0;padding:0;color:var(--text);font:inherit;cursor:pointer;text-align:left}.pal-link b{text-decoration:underline;text-decoration-color:var(--accent)}
 .result-card{padding:12px;border-radius:12px;border:1px solid #345272;background:#0c192c}
 .small{font-size:12px;color:var(--muted)}
 .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -801,7 +802,7 @@ async function pairLookup(){
     return (norm(ra)===norm(a)&&norm(rb)===norm(b))||(norm(ra)===norm(b)&&norm(rb)===norm(a));
   });
   if(!matches.length){$("#pairResult").innerHTML=`<div class="empty">No exact match for those parent names.</div>`;return}
-  $("#pairResult").innerHTML=matches.map(r=>{const child=rowVal(r,"child","offspring","result");return `<div class="result-card result-pal">${imageMarkup(child)}<div><b>${esc(child)}</b><div class="small">${esc(rowVal(r,"parent_a"))}${esc(genderTxt(rowVal(r,"parent_a_gender")))} + ${esc(rowVal(r,"parent_b"))}${esc(genderTxt(rowVal(r,"parent_b_gender")))}${rowVal(r,"via")?` · ${esc(rowVal(r,"via"))}`:""}</div></div></div>`}).join("");
+  $("#pairResult").innerHTML=matches.map(r=>{const child=rowVal(r,"child","offspring","result");return `<div class="result-card result-pal">${state.palMap.has(norm(child))?`<button type="button" class="pal-link" data-open-pal="${esc(child)}" aria-label="Open ${esc(child)} profile">${imageMarkup(child)}<b>${esc(child)}</b></button>`:`${imageMarkup(child)}<b>${esc(child)}</b>`}<div><div class="small">${esc(rowVal(r,"parent_a"))}${esc(genderTxt(rowVal(r,"parent_a_gender")))} + ${esc(rowVal(r,"parent_b"))}${esc(genderTxt(rowVal(r,"parent_b_gender")))}${rowVal(r,"via")?` · ${esc(rowVal(r,"via"))}`:""}</div></div></div>`}).join("");
 }
 async function targetLookup(){
   const n=$("#targetBreed").value.trim();if(!n){$("#targetResult").innerHTML=`<div class="notice warning">Enter a target Pal.</div>`;return}
@@ -1159,6 +1160,7 @@ $("#palDialog").addEventListener("click",e=>{if(e.target===$("#palDialog"))$("#p
 $("#breedPairBtn").addEventListener("click",()=>pairLookup().catch(e=>$("#pairResult").innerHTML=`<div class="notice error">${esc(e.message)}</div>`));
 $("#targetBreedBtn").addEventListener("click",()=>targetLookup().catch(e=>$("#targetResult").innerHTML=`<div class="notice error">${esc(e.message)}</div>`));
 $("#passiveSearch").addEventListener("input",renderPassives);
+$("#pairResult").addEventListener("click",e=>{const b=e.target.closest("[data-open-pal]");if(b)openPal(b.dataset.openPal)});
 initMapUI();
 loadCore();
 })();
