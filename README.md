@@ -1,6 +1,6 @@
 # Palpedia+
 
-![Palpedia+ Pal browser](docs/screenshots/pals.png)
+![Palpedia+ Pal browser](docs/screenshots/pal-grid.png)
 
 **Palpedia+** is an unofficial, searchable encyclopedia for **Palworld** with far more practical detail than the in-game Paldeck: stats, a build calculator, breeding lookups, an interactive spawn map, an item library and passive skills, all in a single HTML file.
 
@@ -19,29 +19,29 @@
 ### Pal profiles and stat calculator
 Each Pal opens a full profile: core stats, condensation effects, an individual build calculator, work suitability, Partner Skill, movement, locations, breeding and skills.
 
-![Pal profile with stat calculator](docs/screenshots/profile.png)
+![Pal profile with stat calculator](docs/screenshots/pal-profile.png)
 
 ### Interactive spawn map
 Search Pals by name and see each one's wild spawn zones as a coloured cloud on the Main Map or World Tree, with in-game marker icons.
 
-![Interactive map with Pal spawn zones](docs/screenshots/map.png)
+![Interactive map with Pal spawn zones](docs/screenshots/spawn-map.png)
 
 ### Breeding lookup
 Pick two parents to find the offspring, or pick a target Pal to list the parent combinations that produce it. Results use the current 1.0.5 pair table.
 
-![Breeding lookup](docs/screenshots/breeding.png)
+![Breeding lookup](docs/screenshots/breeding-lookup.png)
 
 ### Item library
 Browse materials, food, weapons, armor and more. Each item shows its crafting recipe, which Pals drop or farm it, and what it is used to craft.
 
-![Item library](docs/screenshots/items.png)
+![Item library](docs/screenshots/item-library.png)
 
 ![Item detail with recipe](docs/screenshots/item-detail.png)
 
 ### Passive skills
 A searchable passive skill database with effect, tier, category and breedability.
 
-![Passive skill library](docs/screenshots/passives.png)
+![Passive skill library](docs/screenshots/passive-skills.png)
 
 > Screenshots were captured from the live app. Pal and item artwork is the official Palworld imagery, loaded at runtime from third-party sources (not bundled in this repository); if those sources are unreachable the app shows letter placeholders instead.
 
