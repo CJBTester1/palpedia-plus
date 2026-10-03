@@ -58,6 +58,7 @@ nav::-webkit-scrollbar{display:none}
 .panel h2{font-size:20px}.panel h3{font-size:16px}
 .two{display:grid;grid-template-columns:1fr;gap:10px}
 .breed-result{margin-top:12px;min-height:52px}
+.result-pal{display:flex;gap:12px;align-items:center}.result-pal .pal-img,.result-pal .img-fallback{width:56px;height:56px;flex:0 0 auto}
 .result-card{padding:12px;border-radius:12px;border:1px solid #345272;background:#0c192c}
 .small{font-size:12px;color:var(--muted)}
 .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -223,11 +224,11 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
         <div class="two">
           <div>
             <label for="parentA">Parent A</label>
-            <input class="search" id="parentA" list="palNames" placeholder="e.g. Shadowbeak">
+            <input class="search" id="parentA" placeholder="e.g. Shadowbeak">
           </div>
           <div>
             <label for="parentB">Parent B</label>
-            <input class="search" id="parentB" list="palNames" placeholder="e.g. Frostallion Noct">
+            <input class="search" id="parentB" placeholder="e.g. Frostallion Noct">
           </div>
         </div>
         <button class="loadmore" id="breedPairBtn" type="button">Find offspring</button>
@@ -236,11 +237,10 @@ footer{margin-top:26px;color:var(--muted);font-size:12px;text-align:center}
       <div class="panel">
         <h2>How do I breed a specific Pal?</h2>
         <label for="targetBreed">Target Pal</label>
-        <input class="search" id="targetBreed" list="palNames" placeholder="e.g. Eidrolon">
+        <input class="search" id="targetBreed" placeholder="e.g. Eidrolon">
         <button class="loadmore" id="targetBreedBtn" type="button">Show parent combinations</button>
         <div class="breed-result" id="targetResult"></div>
       </div>
-      <datalist id="palNames"></datalist>
     </section>
 
     <section class="section" id="passives">
@@ -425,7 +425,8 @@ function populateFilters(){
   [...$("#workFilter").options].forEach(o=>{if(o.value)o.value=o.textContent.replaceAll(" ","_")});
 }
 function populateNames(){
-  $("#palNames").innerHTML=state.pals.map(p=>`<option value="${esc(p.name)}"></option>`).join("");
+  const palItems=state.pals.map(p=>({label:p.name,kind:"Pal"}));
+  ["#parentA","#parentB","#targetBreed"].forEach(id=>attachSuggest($(id),()=>palItems,()=>{}));
 }
 function sortPals(arr,mode){
   const cp=[...arr];
@@ -800,7 +801,7 @@ async function pairLookup(){
     return (norm(ra)===norm(a)&&norm(rb)===norm(b))||(norm(ra)===norm(b)&&norm(rb)===norm(a));
   });
   if(!matches.length){$("#pairResult").innerHTML=`<div class="empty">No exact match for those parent names.</div>`;return}
-  $("#pairResult").innerHTML=matches.map(r=>`<div class="result-card"><b>${esc(rowVal(r,"child","offspring","result"))}</b><div class="small">${esc(rowVal(r,"parent_a"))}${esc(genderTxt(rowVal(r,"parent_a_gender")))} + ${esc(rowVal(r,"parent_b"))}${esc(genderTxt(rowVal(r,"parent_b_gender")))}${rowVal(r,"via")?` · ${esc(rowVal(r,"via"))}`:""}</div></div>`).join("");
+  $("#pairResult").innerHTML=matches.map(r=>{const child=rowVal(r,"child","offspring","result");return `<div class="result-card result-pal">${imageMarkup(child)}<div><b>${esc(child)}</b><div class="small">${esc(rowVal(r,"parent_a"))}${esc(genderTxt(rowVal(r,"parent_a_gender")))} + ${esc(rowVal(r,"parent_b"))}${esc(genderTxt(rowVal(r,"parent_b_gender")))}${rowVal(r,"via")?` · ${esc(rowVal(r,"via"))}`:""}</div></div></div>`}).join("");
 }
 async function targetLookup(){
   const n=$("#targetBreed").value.trim();if(!n){$("#targetResult").innerHTML=`<div class="notice warning">Enter a target Pal.</div>`;return}
