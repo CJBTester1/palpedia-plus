@@ -25,22 +25,11 @@ jobs:
 
       - name: Prepare Pages site
         run: |
-          mkdir -p _site/runtime/map _site/runtime/habitat
+          mkdir -p _site
           cp index.html _site/index.html
           cp palpedia-plus.html README.md LICENSE THIRD_PARTY_NOTICES.md _site/ 2>/dev/null || true
-
-          MAP_BASE="https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json"
-          for file in fast_travel_points.json towers.json dungeons.json effigies.json notes.json skill_fruits.json ancient_ruins.json bosses.json camps.json eggs_spawners.json; do
-            curl --fail --location --retry 3 --retry-delay 2 "$MAP_BASE/$file" -o "_site/runtime/map/$file"
-          done
-
-          curl --fail --location --retry 3 --retry-delay 2 \
-            "https://paldb.cc/DataTable/UI/DT_PaldexDistributionData.json" \
-            -o "_site/runtime/habitat/DT_PaldexDistributionData.json"
-
-          test -s _site/runtime/map/bosses.json
-          test -s _site/runtime/map/fast_travel_points.json
-          test -s _site/runtime/habitat/DT_PaldexDistributionData.json
+          # Map tiles, markers and spawn zones are loaded by the browser from GitHub at runtime.
+          test -s _site/index.html
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4

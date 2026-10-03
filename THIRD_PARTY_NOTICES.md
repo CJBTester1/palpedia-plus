@@ -19,8 +19,12 @@ Palpedia+ references or loads maintained third-party resources at runtime, inclu
   https://github.com/beliarance/palworld-kb
 - oMaN-Rod/palworld-save-pal — extracted Friendship/Trust parameters and map resources. The upstream project declares GPL-3.0.
   https://github.com/oMaN-Rod/palworld-save-pal
-- PalDB — version reference and Paldeck distribution data used for habitat overlays.
+- PalDB — version reference and Pal icon images.
   https://paldb.cc/
+- catrenelle/PalDex — extracted wild Pal spawn locations used for map spawn-zone clouds. The upstream project declares MIT.
+  https://github.com/catrenelle/PalDex
+- Leaflet — interactive map engine, loaded from cdnjs/unpkg. BSD-2-Clause.
+  https://leafletjs.com/
 - PalworldBreeding.gg — breeding data/methodology.
   https://palworldbreeding.gg/
 - JohnnyDalvi/Palworld_Smart_Breeder — fallback breeding data.
