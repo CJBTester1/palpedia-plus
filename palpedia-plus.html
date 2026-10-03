@@ -18,8 +18,8 @@ const URLS = {
   trustPals: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json/pals.json",
   trustNames: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/data/json/l10n/en/pals.json",
   mapData: "https://cjbtester1.github.io/palpedia-plus/runtime/map/",
-  mapTiles: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/psp-ui/static/maps/",
-  mapAssets: "https://raw.githubusercontent.com/oMaN-Rod/palworld-save-pal/main/psp-ui/src/lib/assets/img/",
+  mapTiles: "https://cdn.jsdelivr.net/gh/oMaN-Rod/palworld-save-pal@main/psp-ui/static/maps/",
+  mapAssets: "https://cdn.jsdelivr.net/gh/oMaN-Rod/palworld-save-pal@main/psp-ui/src/lib/assets/img/",
   habitatDistribution: "https://cjbtester1.github.io/palpedia-plus/runtime/habitat/DT_PaldexDistributionData.json"
 };
 const state = {pals:[], palMap:new Map(), regions:{}, locationDetails:{}, iconUrls:new Map(), active:null, passives:null, dps:null, breeding:null, breedingByChild:null, trustByName:null, mapLoaded:false, mapArea:"MainMap", mapLayers:{}, mapHidden:new Set(), habitatDistribution:null, habitatPal:null, habitatRow:null, mapScale:1, mapX:0, mapY:0, visible:48, filtered:[], iconIds:new Map()};
@@ -32,10 +32,16 @@ const status = (title,text,kind="") => {
   $("#statusTitle").textContent=title; $("#statusText").textContent=text;
   $("#statusDot").className="dot"+(kind?(" "+kind):"");
 };
-async function getJSON(url){
-  const r=await fetch(url,{cache:"no-store"});
-  if(!r.ok) throw new Error("HTTP "+r.status+" for "+url);
-  return r.json();
+async function getJSON(url,timeout=12000){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);
+  try{
+    const r=await fetch(url,{cache:"no-store",signal:controller.signal});
+    if(!r.ok) throw new Error("HTTP "+r.status+" for "+url);
+    return await r.json();
+  }catch(e){
+    if(e.name==="AbortError")throw new Error("Request timed out for "+url);
+    throw e;
+  }finally{clearTimeout(timer)}
 }
 function imageMarkup(name,size=""){
   const direct=state.iconUrls.get(name);
@@ -496,9 +502,21 @@ function mapIconUrl(cat){return URLS.mapAssets+cat.icon}
 function normalizeMapRows(raw){return Array.isArray(raw)?raw:Object.entries(raw||{}).map(([key,v])=>Object.assign({_key:key},v))}
 function mapLabel(cat,row){if(["alpha_pals","predator_pals","bounty"].includes(cat.id)){const n=String(row.character_id||"").replace(/^BOSS_/i,"").replaceAll("_"," ");return(n&&n!=="None"?n:cat.name)+(row.level?" · Lv. "+row.level:"")}if(cat.id==="journals")return row._key||"Journal";if(cat.id==="fast_travel")return row.id||"Fast Travel";return cat.name.replace(/s$/,"")}
 async function loadMapCategory(cat){if(state.mapLayers[cat.id])return;try{const raw=await getJSON(URLS.mapData+cat.file);state.mapLayers[cat.id]=normalizeMapRows(raw).filter(x=>Number.isFinite(+x.x)&&Number.isFinite(+x.y)&&(!cat.filter||cat.filter(x)))}catch(e){console.warn("Map category unavailable:",cat.id,e);state.mapLayers[cat.id]=[]}}
-async function ensureMap(){if(state.mapLoaded)return;$("#mapLoading").hidden=false;$("#mapLoading").textContent="Loading current Palworld map markers…";await Promise.all(MAP_CATS.filter(x=>!x.lazy).map(loadMapCategory));state.mapLoaded=true;state.mapHidden=new Set(MAP_CATS.filter(x=>!x.show).map(x=>x.id));renderMapFilters();renderMap(true);$("#mapLoading").hidden=true}
+async function ensureMap(){
+  if(state.mapLoaded)return;
+  state.mapLoaded=true;
+  state.mapHidden=new Set(MAP_CATS.filter(x=>!x.show).map(x=>x.id));
+  renderMapFilters();
+  renderMap(true);
+  $("#mapLoading").hidden=false;
+  $("#mapLoading").textContent="Loading current Palworld map markers…";
+  await Promise.all(MAP_CATS.filter(x=>!x.lazy).map(loadMapCategory));
+  renderMapMarkers();
+  renderHabitatOverlay();
+  $("#mapLoading").hidden=true;
+}
 function renderMapTiles(){const stage=$("#mapStage"),a=MAP_AREAS[state.mapArea],frag=document.createDocumentFragment();for(let x=0;x<16;x++)for(let y=0;y<16;y++){const img=document.createElement("img");img.className="map-tile";img.alt="";img.loading="lazy";img.draggable=false;img.style.left=x*MAP_TILE_SIZE+"px";img.style.top=y*MAP_TILE_SIZE+"px";img.src=URLS.mapTiles+a.dir+"/"+MAP_TILE_Z+"/"+x+"/"+y+".webp";frag.appendChild(img)}stage.replaceChildren(frag)}
-function renderMapMarkers(){const stage=$("#mapStage"),frag=document.createDocumentFragment();for(const cat of MAP_CATS){if(state.mapHidden.has(cat.id))continue;for(const row of state.mapLayers[cat.id]||[]){if(mapAreaFor(+row.x,+row.y)!==state.mapArea)continue;const p=worldToMapPixel(+row.x,+row.y),b=document.createElement("button");b.type="button";b.className="map-marker";b.style.left=p.x+"px";b.style.top=p.y+"px";b.title=mapLabel(cat,row);const im=document.createElement("img");im.src=mapIconUrl(cat);im.alt="";im.onerror=()=>{im.remove();const d=document.createElement("div");d.className="fallback-pin";b.appendChild(d)};b.appendChild(im);b.addEventListener("click",e=>{e.stopPropagation();showMapPopup(b,cat,row)});frag.appendChild(b)}}stage.appendChild(frag)}
+function renderMapMarkers(){const stage=$("#mapStage"),frag=document.createDocumentFragment();stage.querySelectorAll(".map-marker,.map-pop").forEach(x=>x.remove());for(const cat of MAP_CATS){if(state.mapHidden.has(cat.id))continue;for(const row of state.mapLayers[cat.id]||[]){if(mapAreaFor(+row.x,+row.y)!==state.mapArea)continue;const p=worldToMapPixel(+row.x,+row.y),b=document.createElement("button");b.type="button";b.className="map-marker";b.style.left=p.x+"px";b.style.top=p.y+"px";b.title=mapLabel(cat,row);const im=document.createElement("img");im.src=mapIconUrl(cat);im.alt="";im.onerror=()=>{im.remove();const d=document.createElement("div");d.className="fallback-pin";b.appendChild(d)};b.appendChild(im);b.addEventListener("click",e=>{e.stopPropagation();showMapPopup(b,cat,row)});frag.appendChild(b)}}stage.appendChild(frag)}
 function showMapPopup(marker,cat,row){document.querySelector(".map-pop")?.remove();const p=worldToMapPixel(+row.x,+row.y),g=pixelToGame(p.x,p.y),pop=document.createElement("div");pop.className="map-pop";pop.style.left=Math.min(MAP_SIZE-300,p.x+18)+"px";pop.style.top=Math.max(10,p.y-20)+"px";pop.innerHTML="<b>"+esc(mapLabel(cat,row))+"</b><div class=small>"+esc(cat.name)+"</div><div class=coord>X "+g.x+" · Y "+g.y+"</div>";$("#mapStage").appendChild(pop)}
 function applyMapTransform(){$("#mapStage").style.transform="translate("+state.mapX+"px,"+state.mapY+"px) scale("+state.mapScale+")"}
 function fitMap(){const v=$("#mapViewport"),s=Math.min(v.clientWidth/MAP_SIZE,v.clientHeight/MAP_SIZE);state.mapScale=Math.max(.055,s);state.mapX=(v.clientWidth-MAP_SIZE*state.mapScale)/2;state.mapY=(v.clientHeight-MAP_SIZE*state.mapScale)/2;applyMapTransform()}
