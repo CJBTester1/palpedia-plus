@@ -25,6 +25,7 @@ a{color:var(--accent)}
 h1{font-size:clamp(24px,7vw,38px);line-height:1.05;margin:0}
 .sub{color:var(--muted);margin:5px 0 0}
 .status{margin-top:12px;padding:10px 12px;border:1px solid var(--line);background:rgba(16,27,46,.84);border-radius:12px;display:flex;gap:8px;align-items:flex-start}
+.status[hidden]{display:none}
 .dot{width:9px;height:9px;margin-top:6px;border-radius:50%;background:var(--warn);flex:0 0 auto}
 .dot.ok{background:var(--accent2)} .dot.bad{background:var(--danger)}
 nav{display:flex;gap:8px;overflow:auto;padding:8px 0 12px;scrollbar-width:none;position:sticky;top:0;z-index:20;background:linear-gradient(var(--bg) 65%,rgba(8,17,31,.92))}
@@ -315,7 +316,7 @@ const norm = s => String(s ?? "").trim().toLowerCase();
 const fmt = n => Number.isFinite(Number(n)) ? Number(n).toLocaleString() : "—";
 const unique = a => [...new Set(a.filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
 const status = (title,text,kind="") => {
-  $("#statusTitle").textContent=title; $("#statusText").textContent=text;
+  $("#status").hidden=false; $("#statusTitle").textContent=title; $("#statusText").textContent=text;
   $("#statusDot").className="dot"+(kind?(" "+kind):"");
 };
 async function getJSON(url,timeout=12000){
@@ -409,7 +410,7 @@ async function loadCore(){
     ensurePassives().catch(()=>{});
     renderPals();
     $("#dataStamp").textContent=`Core dataset ${idx.updated||"1.0"}`;
-    status("Current Palpedia data loaded",`${state.pals.length} data records available. Detailed skills and breeding load only when needed to keep mobile startup lighter.`,"ok");
+    $("#status").hidden=true;
   }catch(e){
     console.error(e);
     status("Could not load live Pal data","Check your internet connection, then reload this HTML file. The guide intentionally does not fall back to stale embedded Pal tables.","bad");
