@@ -2,6 +2,19 @@
 
 **Palpedia+** is an unofficial, expanded and searchable encyclopedia for **Palworld**, designed to provide substantially more practical information than the standard in-game Paldeck.
 
+## Use Palpedia+
+
+**You do not need to clone or download this repository to use Palpedia+.**
+
+- **Open online:** https://cjbtester1.github.io/palpedia-plus/
+- **Download the single-file edition:** https://raw.githubusercontent.com/CJBTester1/palpedia-plus/main/palpedia-plus.html
+- **Latest release:** https://github.com/CJBTester1/palpedia-plus/releases/latest
+- **Direct latest release download** (available after the first tagged release): https://github.com/CJBTester1/palpedia-plus/releases/latest/download/palpedia-plus.html
+
+The portable edition is one HTML file. Save `palpedia-plus.html` to a phone, tablet or computer and open it in a modern browser. No installation, package manager or repository checkout is required.
+
+An internet connection is still required for complete functionality because Palpedia+ deliberately loads current Pal data, breeding data, map tiles, habitat data and imagery from maintained external sources at runtime.
+
 The current version targets **Palworld PS5 v1.0.5** and uses live structured data sources rather than embedding a fixed, potentially outdated Pal database.
 
 ## Features
@@ -126,19 +139,15 @@ Location information distinguishes between different levels of precision:
 
 The full Paldeck distribution table is comparatively large, so habitat data is loaded only when the habitat feature is used and then retained for the current browser session.
 
-## Running Palpedia+
+## Project and distribution structure
 
-Palpedia+ is currently a single-page web application contained in:
+`index.html` is the readable canonical source and the GitHub Pages entry point. GitHub Pages expects an entry document such as `index.html`, so it intentionally keeps that filename.
 
-```
-index.html
-```
+`palpedia-plus.html` is the portable single-file edition intended for ordinary users. It keeps the app's HTML, CSS and JavaScript together so users never need to clone the repository or manage separate application files.
 
-No build process, package manager or server-side application is required.
+The checked-in portable file is conservatively compacted. Tagged releases use the repository release workflow to run a dedicated HTML/CSS/JavaScript minifier and attach the resulting `palpedia-plus.html` as a release asset.
 
-For basic local use, open `index.html` in a modern browser with an internet connection.
-
-An internet connection is required because the application loads its Pal, location, skill, passive and breeding datasets from external sources at runtime.
+The application is currently small enough that splitting the canonical source into multiple CSS/JavaScript modules would primarily improve developer maintainability rather than user download performance. If the codebase grows enough to justify modular source files later, the release workflow should continue producing the same one-file portable edition.
 
 ## Current project status
 
@@ -151,6 +160,12 @@ Future development may change the data architecture, interface and project struc
 The project is currently in early development. If contribution guidelines are added later, they will be documented in this repository.
 
 When proposing data changes, prefer verifiable game data, official sources or clearly documented community datasets rather than unsupported values.
+
+## Licence and third-party material
+
+Original Palpedia+ source code is released under the MIT License. That licence does **not** grant rights to Palworld, Pocketpair artwork/game data, trademarks, or third-party datasets and resources.
+
+See `THIRD_PARTY_NOTICES.md` for runtime data sources, attribution and redistribution cautions.
 
 ## Disclaimer
 
